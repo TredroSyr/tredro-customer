@@ -21,28 +21,22 @@ const TABS: Tab[] = [
     outlined: "home_outlined",
   },
   {
-    to: "/map",
-    label: "الخريطة",
-    filled: "location_filled",
-    outlined: "location_outlined",
-  },
-  {
-    to: "/stores",
-    label: "المحلات",
+    to: "/companies",
+    label: "الشركات",
     filled: "store_filled",
     outlined: "store_outlined",
   },
   {
     to: "/orders",
-    label: "الطلبات",
+    label: "طلباتي",
     filled: "receipt_filled",
     outlined: "receipt_outlined",
   },
   {
-    to: "/my-orders",
-    label: "طلباتي",
-    filled: "history_filled",
-    outlined: "history_outlined",
+    to: "/account",
+    label: "حسابي",
+    filled: "user_filled",
+    outlined: "user_outlined",
   },
 ];
 

@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useShallow } from "zustand/react/shallow";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { IconRenderer } from "@/assets/icons/iconRenderer";
-import { useRepTourStore } from "@/store/use-rep-tour-store";
+import { useCustomerNotificationsStore } from "@/store/use-customer-notifications-store";
 
 export function NotificationsDrawer({
   open,
@@ -13,7 +13,7 @@ export function NotificationsDrawer({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
-  const { notifications, markNotificationsRead } = useRepTourStore(
+  const { notifications, markNotificationsRead } = useCustomerNotificationsStore(
     useShallow((s) => ({
       notifications: s.notifications,
       markNotificationsRead: s.markNotificationsRead,

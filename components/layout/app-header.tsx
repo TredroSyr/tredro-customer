@@ -6,10 +6,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useShallow } from "zustand/react/shallow";
 import { IconRenderer } from "@/assets/icons/iconRenderer";
-import { useRepTourStore } from "@/store/use-rep-tour-store";
+import { useCustomerNotificationsStore } from "@/store/use-customer-notifications-store";
 import { useAuthStore } from "@/module/auth/store/auth-store";
 import { useThemeStore } from "@/store/use-theme-store";
-import { formatNum } from "@/lib/rep-tour-data";
 import { NotificationsDrawer } from "@/components/layout/notifications-drawer";
 import { Button } from "@/components/ui/button";
 import {
@@ -31,10 +30,10 @@ interface AppHeaderProps {
 }
 
 export default function AppHeader({ onRefresh }: AppHeaderProps) {
-  const unread = useRepTourStore(
+  const unread = useCustomerNotificationsStore(
     (s) => s.notifications.filter((n) => !n.read).length,
   );
-  const rep = useAuthStore((s) => s.rep);
+  const user = useAuthStore((s) => s.user);
   const clearAuth = useAuthStore((s) => s.clearAuth);
   const { theme, toggleTheme } = useThemeStore(
     useShallow((s) => ({
@@ -44,11 +43,10 @@ export default function AppHeader({ onRefresh }: AppHeaderProps) {
   );
   const router = useRouter();
   const [notificationsOpen, setNotificationsOpen] = useState(false);
-  const [logoError, setLogoError] = useState(false);
+  const [avatarError, setAvatarError] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [referralInfoOpen, setReferralInfoOpen] = useState(false);
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
-  const companyLogo = rep?.company?.logo;
+  const avatar = user?.avatar;
 
   const handleLogout = () => {
     setMenuOpen(false);
@@ -76,7 +74,7 @@ export default function AppHeader({ onRefresh }: AppHeaderProps) {
             />
             {unread > 0 && (
               <span className="absolute -top-1 -end-1 grid min-w-4 place-items-center rounded-full bg-destructive px-1 font-mono text-[9px] font-bold text-destructive-foreground">
-                {formatNum(unread)}
+                {unread}
               </span>
             )}
           </button>
@@ -86,14 +84,14 @@ export default function AppHeader({ onRefresh }: AppHeaderProps) {
               aria-label="الملف الشخصي"
               className="grid size-9 shrink-0 place-items-center overflow-hidden rounded-2xl bg-primary/12 text-primary active:scale-95"
             >
-              {companyLogo && !logoError ? (
+              {avatar && !avatarError ? (
                 <Image
-                  src={companyLogo}
+                  src={avatar}
                   alt="الملف الشخصي"
                   width={36}
                   height={36}
                   className="size-full object-cover"
-                  onError={() => setLogoError(true)}
+                  onError={() => setAvatarError(true)}
                 />
               ) : (
                 <IconRenderer name="user_filled" className="size-4" />
@@ -109,9 +107,9 @@ export default function AppHeader({ onRefresh }: AppHeaderProps) {
                 style={{ animationDelay: "0ms" }}
               >
                 <div className="grid size-11 shrink-0 place-items-center overflow-hidden rounded-2xl bg-primary/12 text-primary">
-                  {companyLogo && !logoError ? (
+                  {avatar && !avatarError ? (
                     <Image
-                      src={companyLogo}
+                      src={avatar}
                       alt="الملف الشخصي"
                       width={44}
                       height={44}
@@ -122,51 +120,22 @@ export default function AppHeader({ onRefresh }: AppHeaderProps) {
                   )}
                 </div>
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-extrabold">{rep?.name}</p>
-                  {rep?.phone && (
+                  <p className="truncate text-sm font-extrabold">{user?.name}</p>
+                  {user?.phone && (
                     <p
                       className="font-mono text-[11px] text-muted-foreground"
                       dir="ltr"
                     >
-                      {rep.phone}
+                      {user.phone}
                     </p>
                   )}
                 </div>
               </div>
 
-              {rep?.referral_code && (
-                <>
-                  <div className="border-t border-border" />
-                  <div
-                    className="flex items-center justify-between gap-2 px-3 py-2.5 group-data-open:animate-in group-data-open:fade-in-0 group-data-open:slide-in-from-top-1 group-data-open:duration-300"
-                    style={{ animationDelay: "40ms" }}
-                  >
-                    <span className="flex items-center gap-2 text-xs font-bold">
-                      <IconRenderer
-                        name="tag_outlined"
-                        className="size-4 text-primary"
-                      />
-                      كود الإحالة
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      <span className="font-mono text-xs font-bold text-primary">
-                        {rep.referral_code}
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => setReferralInfoOpen(true)}
-                        aria-label="معلومات عن كود الإحالة"
-                        className="grid size-5 place-items-center rounded-full text-muted-foreground active:scale-95"
-                      >
-                        <IconRenderer name="info_outlined" className="size-4" />
-                      </button>
-                    </span>
-                  </div>
-                </>
-              )}
+              <div className="border-t border-border" />
 
               <Link
-                href="/settings"
+                href="/account"
                 onClick={() => setMenuOpen(false)}
                 className="flex items-center gap-2.5 px-3 py-2.5 text-xs font-bold group-data-open:animate-in group-data-open:fade-in-0 group-data-open:slide-in-from-top-1 group-data-open:duration-300"
                 style={{ animationDelay: "80ms" }}
@@ -238,27 +207,6 @@ export default function AppHeader({ onRefresh }: AppHeaderProps) {
         open={notificationsOpen}
         onOpenChange={setNotificationsOpen}
       />
-
-      <Dialog open={referralInfoOpen} onOpenChange={setReferralInfoOpen}>
-        <DialogContent className="sm:max-w-sm">
-          <DialogHeader>
-            <DialogTitle>كود الإحالة</DialogTitle>
-            <DialogDescription>
-              شارك هذا الكود مع عملائك الجدد. كل عملية تسجيل أو شراء تتم
-              باستخدامه تُحتسب ضمن إحالاتك وتظهر في التحليلات الخاصة بك.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={() => setReferralInfoOpen(false)}
-            >
-              حسناً
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
 
       <Dialog open={logoutDialogOpen} onOpenChange={setLogoutDialogOpen}>
         <DialogContent className="sm:max-w-sm">
