@@ -1,6 +1,15 @@
 import type { iconName } from "@/assets/icons/iconRenderer/types";
 
-export type EmptyStateVariant = "sales" | "warehouse" | "stores" | "requests";
+export type EmptyStateVariant =
+  | "sales"
+  | "warehouse"
+  | "stores"
+  | "requests"
+  | "companies"
+  | "products"
+  | "orders"
+  | "invoices"
+  | "claims";
 
 export interface EmptyStatePreset {
   icon: iconName;
@@ -29,5 +38,30 @@ export const emptyStatePresets: Record<EmptyStateVariant, EmptyStatePreset> = {
     icon: "cart_outlined",
     title: "لا توجد طلبات سابقة",
     description: "لم يُسجَّل أي طلب لهذا المحل حتى الآن.",
+  },
+  companies: {
+    icon: "store_outlined",
+    title: "لا توجد شركات متاحة",
+    description: "لم يتم العثور على شركات مطابقة في هذه المنطقة حالياً.",
+  },
+  products: {
+    icon: "cart_outlined",
+    title: "لا توجد منتجات بعد",
+    description: "لم تتم إضافة منتجات من هذه الشركة حتى الآن.",
+  },
+  orders: {
+    icon: "receipt_outlined",
+    title: "لا توجد طلبات بعد",
+    description: "ستظهر هنا طلباتك بمجرد إرسالها إلى إحدى الشركات.",
+  },
+  invoices: {
+    icon: "receipt_outlined",
+    title: "لا توجد فواتير بعد",
+    description: "لم يتم إصدار أي فاتورة لك من هذه الشركة حتى الآن.",
+  },
+  claims: {
+    icon: "warning_outlined",
+    title: "لا توجد مطالبات بعد",
+    description: "يمكنك إرسال مطالبة مرتبطة بأي فاتورة سابقة مع هذه الشركة.",
   },
 };
