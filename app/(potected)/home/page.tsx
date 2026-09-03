@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { HomeLocationBar } from "@/module/home/components/home-location-bar";
 import { useCategoriesQuery } from "@/module/categories/hooks";
 import { CategoryFilterBar } from "@/module/categories/components/category-filter-bar";
 import { NearbyCompaniesSection } from "@/module/companies/components/nearby-companies-section";
@@ -23,8 +22,6 @@ export default function HomePage() {
 
   return (
     <div className="space-y-6 pb-6">
-      <HomeLocationBar />
-
       <CategoryFilterBar
         categories={categories}
         value={categoryId}

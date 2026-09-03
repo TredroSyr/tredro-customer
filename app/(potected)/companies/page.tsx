@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { IconRenderer } from "@/assets/icons/iconRenderer";
 import { useCategoriesQuery } from "@/module/categories/hooks";
@@ -11,8 +11,9 @@ import { CompaniesList } from "@/module/companies/components/companies-list";
 
 export default function CompaniesPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [categoryId, setCategoryId] = useState<number | "all">("all");
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(() => searchParams.get("q") ?? "");
 
   const { data: categories = [] } = useCategoriesQuery();
   const { data: companies = [], isLoading } = useCompaniesQuery({
