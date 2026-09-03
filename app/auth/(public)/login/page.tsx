@@ -82,7 +82,7 @@ const LoginPage = () => {
         <motion.div
           key="hero"
           initial={{ height: 0, opacity: 0 }}
-          animate={{ height: "30%", opacity: 1 }}
+          animate={{ height: isKeyboardOpen ? "14%" : "30%", opacity: 1 }}
           exit={{ height: 0, opacity: 0 }}
           transition={LOGO_TRANSITION}
           className="relative flex shrink-0 flex-col items-center justify-center overflow-hidden pb-2 pt-[max(2.5rem,env(safe-area-inset-top))]"
@@ -94,17 +94,30 @@ const LoginPage = () => {
             height={70}
             className="relative h-auto w-27.5 object-contain brightness-0 invert"
           />
-          <Image
-            src="/tredro/boxes.png"
-            alt="welcome"
-            width={320}
-            height={160}
-            className="relative mt-2 h-auto w-full max-w-[320px] object-contain"
-          />
+          <AnimatePresence initial={false}>
+            {!isKeyboardOpen && (
+              <motion.div
+                key="illustration"
+                initial={{ height: 0, opacity: 0, marginTop: 0 }}
+                animate={{ height: "auto", opacity: 1, marginTop: 8 }}
+                exit={{ height: 0, opacity: 0, marginTop: 0 }}
+                transition={LOGO_TRANSITION}
+                className="relative w-full max-w-[320px] overflow-hidden"
+              >
+                <Image
+                  src="/tredro/boxes.png"
+                  alt="welcome"
+                  width={320}
+                  height={160}
+                  className="relative h-auto w-full object-contain"
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.div>
       </AnimatePresence>
 
-      <div className="relative flex h-[75%] min-h-0 flex-1 flex-col overflow-y-auto rounded-t-3xl bg-background px-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-4">
+      <div className="relative flex h-[75%] min-h-0 flex-1 flex-col overflow-y-auto scrollbar-hide rounded-t-3xl bg-background px-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-4">
         <div className="mx-auto  flex w-full max-w-md flex-1 flex-col">
           <Form {...form}>
             <form

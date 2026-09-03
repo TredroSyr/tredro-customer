@@ -183,7 +183,7 @@ export function OnboardingForm() {
         <motion.div
           key="hero"
           initial={{ height: 0, opacity: 0 }}
-          animate={{ height: "40%", opacity: 1 }}
+          animate={{ height: isKeyboardOpen ? "16%" : "40%", opacity: 1 }}
           exit={{ height: 0, opacity: 0 }}
           transition={LOGO_TRANSITION}
           className="relative flex shrink-0 flex-col items-center justify-center overflow-hidden pb-2 pt-[max(2.5rem,env(safe-area-inset-top))]"
@@ -196,26 +196,29 @@ export function OnboardingForm() {
             className="relative h-auto w-27.5 object-contain brightness-0 invert"
           />
           <AnimatePresence mode="wait" initial={false}>
-            <motion.div
-              key={step}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={LOGO_TRANSITION}
-            >
-              <Image
-                src={STEP_HERO_IMAGE[step]}
-                alt="illustration"
-                width={320}
-                height={160}
-                className="relative mt-2 h-[150px] w-full max-w-[320px] object-contain"
-              />
-            </motion.div>
+            {!isKeyboardOpen && (
+              <motion.div
+                key={step}
+                initial={{ height: 0, opacity: 0, marginTop: 0 }}
+                animate={{ height: "auto", opacity: 1, marginTop: 8 }}
+                exit={{ height: 0, opacity: 0, marginTop: 0 }}
+                transition={LOGO_TRANSITION}
+                className="relative w-full max-w-[320px] overflow-hidden"
+              >
+                <Image
+                  src={STEP_HERO_IMAGE[step]}
+                  alt="illustration"
+                  width={320}
+                  height={160}
+                  className="relative h-[150px] w-full object-contain"
+                />
+              </motion.div>
+            )}
           </AnimatePresence>
         </motion.div>
       </AnimatePresence>
 
-      <div className="relative flex h-[60%] min-h-0 flex-1 flex-col overflow-y-auto rounded-t-3xl bg-background px-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-4">
+      <div className="relative flex h-[60%] min-h-0 flex-1 flex-col overflow-y-auto scrollbar-hide rounded-t-3xl bg-background px-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-4">
         <div className="mx-auto flex w-full max-w-md flex-1 flex-col">
           <div className="mb-4 flex gap-1.5">
             {STEPS.map((s, i) => (

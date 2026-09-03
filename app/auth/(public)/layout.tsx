@@ -1,6 +1,6 @@
 import { PublicRoute } from "@/guards/public-route";
 
-export default function RegisterLayout({
+export default function PublicAuthLayout({
   children,
 }: {
   children: React.ReactNode;
