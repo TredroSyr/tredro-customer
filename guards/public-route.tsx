@@ -11,6 +11,9 @@ interface PublicRouteProps {
 export const PublicRoute = ({ children }: PublicRouteProps) => {
   const router = useRouter();
   const isAuthenticated = useAuthStore((state) => !!state.accessToken);
+  const onboardingCompleted = useAuthStore(
+    (state) => state.user?.onboarding_completed ?? false,
+  );
   const [isMounted, setIsMounted] = useState<boolean>(false);
 
   useEffect(() => {
@@ -20,10 +23,9 @@ export const PublicRoute = ({ children }: PublicRouteProps) => {
   }, []);
 
   useEffect(() => {
-    if (isAuthenticated && isMounted) {
-      router.replace("/home");
-    }
-  }, [isAuthenticated, isMounted, router]);
+    if (!isAuthenticated || !isMounted) return;
+    router.replace(onboardingCompleted ? "/home" : "/auth/onboarding");
+  }, [isAuthenticated, onboardingCompleted, isMounted, router]);
 
   if (!isMounted) {
     return null;

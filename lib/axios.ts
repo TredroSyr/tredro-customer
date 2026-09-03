@@ -1,11 +1,6 @@
 import { useAuthStore } from "@/module/auth/store/auth-store";
 import axios, { InternalAxiosRequestConfig } from "axios";
 
-// Not called by any module's api/index.ts yet — every feature is mock-only
-// for now (see lib/mock.ts). Kept in stripped form so swapping a module's
-// mock functions for real requests later is a small, local change instead
-// of building this plumbing from scratch. No refresh-token flow here: this
-// prototype issues a single long-lived mock token, no JWT expiry/rotation.
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BASE_URL,
   timeout: 15000,
@@ -22,21 +17,70 @@ api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   return config;
 });
 
-// A GET that fails at the transport level (timeout, no response at all) is
-// safe to replay once automatically instead of surfacing a cold-launch
-// hiccup as a hard error.
+// Refresh-token rotation is disabled server-side, so a bare access token can
+// be swapped in on the same refresh token. A single retry per request keeps
+// us from looping if the refresh token itself is dead.
+let refreshPromise: Promise<string | null> | null = null;
+
+async function refreshAccessToken(): Promise<string | null> {
+  const refreshToken = useAuthStore.getState().refreshToken;
+  if (!refreshToken) return null;
+
+  if (!refreshPromise) {
+    refreshPromise = axios
+      .post(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/auth/token/refresh`,
+        { refresh: refreshToken },
+        { headers: { Accept: "application/json" } },
+      )
+      .then((response) => {
+        const access = response.data?.data?.access as string | undefined;
+        if (!access) return null;
+        useAuthStore.getState().setAccessToken(access);
+        return access;
+      })
+      .catch(() => {
+        useAuthStore.getState().clearAuth();
+        return null;
+      })
+      .finally(() => {
+        refreshPromise = null;
+      });
+  }
+
+  return refreshPromise;
+}
+
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config as
-      | (InternalAxiosRequestConfig & { _retriedAfterNetworkError?: boolean })
+      | (InternalAxiosRequestConfig & {
+          _retriedAfter401?: boolean;
+          _retriedAfterNetworkError?: boolean;
+        })
       | undefined;
 
+    if (!originalRequest) return Promise.reject(error);
+
+    if (error.response?.status === 401 && !originalRequest._retriedAfter401) {
+      originalRequest._retriedAfter401 = true;
+      const access = await refreshAccessToken();
+      if (access) {
+        originalRequest.headers = originalRequest.headers ?? {};
+        originalRequest.headers.Authorization = `Bearer ${access}`;
+        return api(originalRequest);
+      }
+      return Promise.reject(error);
+    }
+
+    // A GET that fails at the transport level (timeout, no response at all)
+    // is safe to replay once automatically instead of surfacing a cold-launch
+    // hiccup as a hard error.
     const isTransportFailure = !error.response;
-    const isGet = (originalRequest?.method ?? "get").toLowerCase() === "get";
+    const isGet = (originalRequest.method ?? "get").toLowerCase() === "get";
 
     if (
-      originalRequest &&
       isTransportFailure &&
       isGet &&
       !originalRequest._retriedAfterNetworkError

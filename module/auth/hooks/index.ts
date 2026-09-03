@@ -2,13 +2,14 @@
 
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import { AxiosError } from "axios";
 import { toast } from "sonner";
 import { useAuthStore } from "../store/auth-store";
-import { login, register, MockApiError } from "../api";
-import { LoginCredentials, RegisterPayload } from "../types";
+import { signUp, signIn, signOut } from "../api";
+import { ApiErrorResponse, SignInPayload, SignUpPayload } from "../types";
 
 interface MutationCallbacks {
-  onError?: (error: MockApiError) => void;
+  onError?: (error: AxiosError<ApiErrorResponse>) => void;
 }
 
 export function useLoginMutation(callbacks?: MutationCallbacks) {
@@ -16,13 +17,17 @@ export function useLoginMutation(callbacks?: MutationCallbacks) {
   const setAuth = useAuthStore((s) => s.setAuth);
 
   return useMutation({
-    mutationFn: (credentials: LoginCredentials) => login(credentials),
+    mutationFn: (payload: SignInPayload) => signIn(payload),
     onSuccess: (response) => {
-      setAuth(response.data.user, response.data.tokens);
+      setAuth(response.data.customer, response.data.tokens);
       toast.success(response.message);
-      router.replace("/home");
+      router.replace(
+        response.data.customer.onboarding_completed
+          ? "/home"
+          : "/auth/onboarding",
+      );
     },
-    onError: (error: MockApiError) => {
+    onError: (error: AxiosError<ApiErrorResponse>) => {
       callbacks?.onError?.(error);
     },
   });
@@ -33,14 +38,28 @@ export function useRegisterMutation(callbacks?: MutationCallbacks) {
   const setAuth = useAuthStore((s) => s.setAuth);
 
   return useMutation({
-    mutationFn: (payload: RegisterPayload) => register(payload),
+    mutationFn: (payload: SignUpPayload) => signUp(payload),
     onSuccess: (response) => {
-      setAuth(response.data.user, response.data.tokens);
+      setAuth(response.data.customer, response.data.tokens);
       toast.success(response.message);
-      router.replace("/home");
+      router.replace("/auth/onboarding");
     },
-    onError: (error: MockApiError) => {
+    onError: (error: AxiosError<ApiErrorResponse>) => {
       callbacks?.onError?.(error);
+    },
+  });
+}
+
+export function useSignOutMutation() {
+  const router = useRouter();
+  const refreshToken = useAuthStore((s) => s.refreshToken);
+  const clearAuth = useAuthStore((s) => s.clearAuth);
+
+  return useMutation({
+    mutationFn: () => signOut(refreshToken),
+    onSettled: () => {
+      clearAuth();
+      router.replace("/auth/login");
     },
   });
 }

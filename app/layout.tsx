@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import AppDownloadDrawer from "@/layout/app-download-drawer";
 import { thmanyahSans } from "@/lib/fonts";
 import "./globals.css";
+import "leaflet/dist/leaflet.css";
 import { Toaster } from "sonner";
 import { QueryProvider } from "@/components/provider/QueryClientProvider";
 import ErudaLoader from "@/components/tredro/ErudaLoader";

@@ -1,10 +1,10 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 import { IconRenderer } from "@/assets/icons/iconRenderer";
 import { useAuthStore } from "@/module/auth/store/auth-store";
+import { useSignOutMutation } from "@/module/auth/hooks";
 import { useThemeStore } from "@/store/use-theme-store";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,17 +17,15 @@ import {
 } from "@/components/ui/dialog";
 
 export default function AccountPage() {
-  const router = useRouter();
   const user = useAuthStore((s) => s.user);
-  const clearAuth = useAuthStore((s) => s.clearAuth);
+  const signOutMutation = useSignOutMutation();
   const { theme, toggleTheme } = useThemeStore(
     useShallow((s) => ({ theme: s.theme, toggleTheme: s.toggleTheme })),
   );
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
 
   const handleLogout = () => {
-    clearAuth();
-    router.replace("/auth/login");
+    signOutMutation.mutate();
   };
 
   return (

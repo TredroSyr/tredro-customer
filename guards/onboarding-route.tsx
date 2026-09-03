@@ -5,18 +5,18 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-interface ProtectedRouteProps {
+interface OnboardingRouteProps {
   children: React.ReactNode;
 }
 
-export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
+/** Onboarding requires a signed-in customer, and is skipped once their account is already complete. */
+export const OnboardingRoute = ({ children }: OnboardingRouteProps) => {
   const router = useRouter();
-  const [isMounted, setIsMounted] = useState(false);
-
   const isAuthenticated = useAuthStore((state) => !!state.accessToken);
   const onboardingCompleted = useAuthStore(
     (state) => state.user?.onboarding_completed ?? false,
   );
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
@@ -25,14 +25,10 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
 
   useEffect(() => {
     if (!isMounted) return;
-
     if (!isAuthenticated) {
       router.replace("/auth/login");
-      return;
-    }
-
-    if (!onboardingCompleted) {
-      router.replace("/auth/onboarding");
+    } else if (onboardingCompleted) {
+      router.replace("/home");
     }
   }, [isMounted, isAuthenticated, onboardingCompleted, router]);
 
@@ -49,7 +45,8 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
       </div>
     );
   }
-  if (!isAuthenticated || !onboardingCompleted) return null;
+
+  if (!isAuthenticated || onboardingCompleted) return null;
 
   return <>{children}</>;
 };

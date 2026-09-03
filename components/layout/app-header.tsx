@@ -3,11 +3,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { useShallow } from "zustand/react/shallow";
 import { IconRenderer } from "@/assets/icons/iconRenderer";
 import { useCustomerNotificationsStore } from "@/store/use-customer-notifications-store";
 import { useAuthStore } from "@/module/auth/store/auth-store";
+import { useSignOutMutation } from "@/module/auth/hooks";
 import { useThemeStore } from "@/store/use-theme-store";
 import { NotificationsDrawer } from "@/components/layout/notifications-drawer";
 import { Button } from "@/components/ui/button";
@@ -34,14 +34,13 @@ export default function AppHeader({ onRefresh }: AppHeaderProps) {
     (s) => s.notifications.filter((n) => !n.read).length,
   );
   const user = useAuthStore((s) => s.user);
-  const clearAuth = useAuthStore((s) => s.clearAuth);
+  const signOutMutation = useSignOutMutation();
   const { theme, toggleTheme } = useThemeStore(
     useShallow((s) => ({
       theme: s.theme,
       toggleTheme: s.toggleTheme,
     })),
   );
-  const router = useRouter();
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [avatarError, setAvatarError] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -50,8 +49,7 @@ export default function AppHeader({ onRefresh }: AppHeaderProps) {
 
   const handleLogout = () => {
     setMenuOpen(false);
-    clearAuth();
-    router.replace("/auth/login");
+    signOutMutation.mutate();
   };
 
   return (
