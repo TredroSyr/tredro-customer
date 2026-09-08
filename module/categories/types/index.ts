@@ -1,10 +1,9 @@
-import type { iconName } from "@/assets/icons/iconRenderer/types";
-
 export interface Category {
   id: number;
   name: string;
-  slug: string;
-  icon: iconName;
+  parent: number | null;
+  parent_name: string | null;
+  products_count: number;
 }
 
 export interface CategoriesListResponse {

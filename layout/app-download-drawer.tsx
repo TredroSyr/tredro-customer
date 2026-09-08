@@ -91,12 +91,12 @@ export default function AppDownloadDrawer() {
           <span className="mb-2 text-sm font-medium text-primary">Tredro</span>
 
           <h2 className="mb-3 text-2xl font-bold leading-snug text-foreground">
-            إدارة أسهل لمندوبيك وطلباتك
+            تجربة تسوق أسهل مع تريدرو
           </h2>
 
           <p className="mb-6 max-w-xs text-sm leading-relaxed text-muted-foreground">
-            حمّل تطبيق تريدرو وتابع مندوبي المبيعات، الطلبات، والمخزون أينما كنت
-            — إشعارات فورية، وتحكّم كامل من جوالك.
+            حمّل تطبيق تريدرو وتابع طلباتك وتسوّق بسهولة أينما كنت — إشعارات
+            فورية، وتجربة أسرع من جوالك.
           </p>
 
           <Button

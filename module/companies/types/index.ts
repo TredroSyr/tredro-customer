@@ -4,22 +4,22 @@ export interface Company {
   id: number;
   name: string;
   slug: string;
+  currency: string;
   logo: string | null;
   cover: string | null;
-  category_id: number;
-  rating: number;
-  distance_km: number | null;
-  is_open: boolean;
-  description: string | null;
   governorate: string | null;
   region: string | null;
-  delivery_fee: string;
-  min_order: string;
+  description: string | null;
+  business_type: string | null;
 }
 
 export interface CompaniesListParams {
-  category_id?: number;
-  q?: string;
+  page?: number;
+  search?: string;
+  business_type?: string;
+  governorate?: string;
+  region?: string;
+  ordering?: "name" | "-name" | "created_at" | "-created_at";
 }
 
 export interface CompaniesListResponse {

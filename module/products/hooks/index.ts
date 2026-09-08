@@ -16,11 +16,14 @@ export function useProductsQuery(
   });
 }
 
-export function useProductByIdQuery(id: number | null) {
+export function useProductByIdQuery(
+  companyId: number | null,
+  productId: number | null,
+) {
   return useQuery({
-    queryKey: ["product", id],
-    queryFn: () => getProductById(id as number),
+    queryKey: ["product", companyId, productId],
+    queryFn: () => getProductById(companyId as number, productId as number),
     select: (res) => res.data.product,
-    enabled: id !== null,
+    enabled: companyId !== null && productId !== null,
   });
 }

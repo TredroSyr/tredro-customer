@@ -8,15 +8,17 @@ import { ProductCard } from "./product-card";
 export function ProductGrid({
   products,
   isLoading,
+  companyId,
 }: {
   products: Product[];
   isLoading: boolean;
+  companyId: number;
 }) {
   if (isLoading) {
     return (
       <div className="grid grid-cols-2 gap-3">
         {[1, 2, 3, 4].map((i) => (
-          <Skeleton key={i} className="aspect-[0.75] w-full rounded-2xl" />
+          <Skeleton key={i} className="aspect-square w-full rounded-2xl" />
         ))}
       </div>
     );
@@ -33,7 +35,7 @@ export function ProductGrid({
   return (
     <div className="grid grid-cols-2 gap-3">
       {products.map((product) => (
-        <ProductCard key={product.id} product={product} />
+        <ProductCard key={product.id} product={product} companyId={companyId} />
       ))}
     </div>
   );

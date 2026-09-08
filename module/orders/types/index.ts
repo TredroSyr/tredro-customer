@@ -1,38 +1,48 @@
 import { Pagination } from "@/lib/api-types";
 
-export type OrderStatus =
-  | "pending"
-  | "accepted"
-  | "preparing"
-  | "out_for_delivery"
-  | "delivered"
-  | "cancelled"
-  | "rejected";
+export type OrderStatus = "pending" | "accepted" | "fulfilled" | "rejected" | "cancelled";
 
 export interface OrderLine {
   id: number;
-  product_id: number;
+  product: number;
   product_name: string;
+  product_sku: string;
+  unit: number;
   unit_name: string;
-  quantity: string;
-  unit_price: string;
-  line_total: string;
+  desired_quantity: string;
+  unit_price: string | null;
+  line_total: string | null;
 }
 
-export interface Order {
+export interface OrderSummary {
   id: number;
-  company_id: number;
-  company_name: string;
+  company: number;
+  customer: number;
+  customer_name: string;
+  customer_phone: string;
+  rep: number | null;
+  rep_name: string | null;
   status: OrderStatus;
-  lines: OrderLine[];
-  total_amount: string;
-  delivery_address: string;
-  notes: string | null;
+  fulfilled_by_invoice: number | null;
+  fulfilled_by_invoice_number: string | null;
+  fulfilled_at: string | null;
+  cancelled_at: string | null;
+  accepted_at: string | null;
+  rejected_at: string | null;
+  rejection_reason: string;
+  line_count: number;
+  notes: string;
   created_at: string;
   updated_at: string;
 }
 
+export interface Order extends OrderSummary {
+  lines: OrderLine[];
+  estimated_total: string | null;
+}
+
 export interface OrdersListParams {
+  page?: number;
   status?: OrderStatus;
   company_id?: number;
 }
@@ -40,25 +50,17 @@ export interface OrdersListParams {
 export interface OrdersListResponse {
   success: boolean;
   message: string;
-  data: { orders: Order[]; pagination: Pagination };
+  data: { requests: OrderSummary[]; pagination: Pagination };
 }
 
 export interface OrderDetailResponse {
   success: boolean;
   message: string;
-  data: { order: Order };
+  data: { request: Order };
 }
 
 export interface CreateOrderPayload {
   company_id: number;
-  company_name: string;
-  delivery_address: string;
   notes?: string;
-  lines: {
-    product_id: number;
-    product_name: string;
-    unit_name: string;
-    quantity: number;
-    unit_price: string;
-  }[];
+  lines: { product_id: number; quantity: string }[];
 }

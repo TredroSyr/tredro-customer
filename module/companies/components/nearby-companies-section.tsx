@@ -7,19 +7,16 @@ import { CompanyCard } from "./company-card";
 
 export function NearbyCompaniesSection() {
   const router = useRouter();
-  const { data: companies = [], isLoading } = useCompaniesQuery();
+  const { data: companies = [], isLoading } = useCompaniesQuery({ ordering: "-created_at" });
 
-  const nearby = [...companies]
-    .filter((c) => c.distance_km !== null)
-    .sort((a, b) => (a.distance_km ?? 0) - (b.distance_km ?? 0))
-    .slice(0, 5);
+  const nearby = companies.slice(0, 5);
 
   if (!isLoading && nearby.length === 0) return null;
 
   return (
     <section>
       <div className="flex items-center justify-between px-1">
-        <h2 className="text-sm font-extrabold">قريب منك</h2>
+        <h2 className="text-sm font-extrabold">أحدث الشركات</h2>
         <button
           type="button"
           onClick={() => router.push("/companies")}

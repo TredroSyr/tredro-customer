@@ -124,7 +124,7 @@ function DrawerContent({
       <DrawerPrimitive.Viewport
         data-slot="drawer-viewport"
         data-modal={modal}
-        className="pointer-events-none fixed inset-0 z-[2000] select-none data-[modal=true]:pointer-events-auto"
+        className="pointer-events-none fixed inset-0 z-[3000] select-none data-[modal=true]:pointer-events-auto"
       >
         <DrawerPrimitive.Popup
           data-slot="drawer-popup"

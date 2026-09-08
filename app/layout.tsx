@@ -8,7 +8,6 @@ import "leaflet/dist/leaflet.css";
 import { Toaster } from "sonner";
 import { QueryProvider } from "@/components/provider/QueryClientProvider";
 import ErudaLoader from "@/components/tredro/ErudaLoader";
-import NetworkControlPing from "@/components/tredro/NetworkControlPing";
 
 export const metadata: Metadata = {
   title: "Tredro | تسوّق من الشركات الموثوقة",
@@ -88,7 +87,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <AppDownloadDrawer />
 
           <ErudaLoader />
-          <NetworkControlPing />
+
           <Toaster
             position="top-center"
             dir="rtl"

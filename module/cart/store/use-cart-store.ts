@@ -71,6 +71,8 @@ export const useCartStore = create<CartState>()(
   ),
 );
 
+const EMPTY_CART: CartItem[] = [];
+
 export function useCartForCompany(companyId: number) {
-  return useCartStore((s) => s.carts[companyId] ?? []);
+  return useCartStore((s) => s.carts[companyId] ?? EMPTY_CART);
 }

@@ -55,7 +55,7 @@ function CompanyDetailContent() {
         {tab === "products" && <CompanyProductsTab company={company} />}
         {tab === "invoices" && <CompanyInvoicesTab company={company} />}
         {tab === "orders" && <CompanyOrdersTab company={company} />}
-        {tab === "account" && <CompanyAccountTab company={company} />}
+
         {tab === "balance" && <CompanyBalanceCard company={company} />}
       </div>
     </div>

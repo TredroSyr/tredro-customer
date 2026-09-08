@@ -37,7 +37,7 @@ export function CategoryFilterBar({
               : "bg-secondary text-muted-foreground"
           }`}
         >
-          <IconRenderer name={category.icon} className="size-3.5" />
+          <IconRenderer name="grid_view_outlined" className="size-3.5" />
           {category.name}
         </button>
       ))}

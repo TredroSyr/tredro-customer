@@ -168,8 +168,8 @@ export function OnboardingForm() {
         referral_code: values.referral_code?.trim() || undefined,
         governorate: values.governorate?.trim() || undefined,
         region: values.region?.trim() || undefined,
-        latitude: values.latitude,
-        longitude: values.longitude,
+        latitude: Number(values.latitude.toFixed(6)),
+        longitude: Number(values.longitude.toFixed(6)),
       },
       { onSuccess: () => router.replace("/home") },
     );
