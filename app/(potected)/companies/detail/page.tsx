@@ -3,7 +3,7 @@
 import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useCompanyByIdQuery } from "@/module/companies/hooks";
-import { SkeletonCard } from "@/components/ui/skeleton";
+import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/tredro/empty-state";
 import { CompanyDetailHeader } from "@/module/companies/components/detail/company-detail-header";
 import { CompanyStatsBar } from "@/module/companies/components/detail/company-stats-bar";
@@ -17,6 +17,34 @@ import { CompanyOrdersTab } from "@/module/companies/components/detail/company-o
 import { CompanyAccountTab } from "@/module/companies/components/detail/company-account-tab";
 import { CompanyBalanceCard } from "@/module/companies/components/detail/company-balance-card";
 
+function CompanyDetailSkeleton() {
+  return (
+    <div className="pb-6">
+      <div className="relative -mx-4 -mt-4">
+        <Skeleton className="h-36 w-full rounded-none" />
+        <div className="absolute -bottom-8 start-4 size-16 overflow-hidden rounded-2xl border-4 border-background">
+          <Skeleton className="size-full rounded-none" />
+        </div>
+      </div>
+
+      <div className="mt-10 space-y-2">
+        <Skeleton className="h-5 w-1/2" />
+        <Skeleton className="h-3 w-1/3" />
+      </div>
+
+      <div className="mt-4">
+        <CompanyDetailTabs value="products" onChange={() => {}} isLoading />
+      </div>
+
+      <div className="mt-4 grid grid-cols-2 gap-3">
+        {[1, 2, 3, 4].map((i) => (
+          <Skeleton key={i} className="aspect-square w-full rounded-2xl" />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function CompanyDetailContent() {
   const searchParams = useSearchParams();
   const id = Number(searchParams.get("id"));
@@ -26,12 +54,7 @@ function CompanyDetailContent() {
   const [tab, setTab] = useState<CompanyDetailTab>("products");
 
   if (isLoading) {
-    return (
-      <div className="space-y-2 pb-6">
-        <SkeletonCard />
-        <SkeletonCard />
-      </div>
-    );
+    return <CompanyDetailSkeleton />;
   }
 
   if (!company) {
@@ -64,7 +87,7 @@ function CompanyDetailContent() {
 
 export default function CompanyDetailPage() {
   return (
-    <Suspense fallback={<SkeletonCard />}>
+    <Suspense fallback={<CompanyDetailSkeleton />}>
       <CompanyDetailContent />
     </Suspense>
   );
