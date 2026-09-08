@@ -22,9 +22,24 @@ function OrderDetailContent() {
 
   if (isLoading) {
     return (
-      <div className="space-y-2 pb-6">
-        <Skeleton className="h-24 w-full rounded-2xl" />
-        <Skeleton className="h-40 w-full rounded-2xl" />
+      <div className="space-y-4 pb-6">
+        <Skeleton className="size-9 rounded-2xl" />
+
+        <div className="rounded-2xl border border-border bg-background/60 p-4">
+          <div className="flex items-center justify-between">
+            <Skeleton className="h-4 w-32" />
+            <Skeleton className="h-5 w-16 rounded-full" />
+          </div>
+          <Skeleton className="mt-2 h-2.5 w-24" />
+        </div>
+
+        <div className="space-y-2">
+          <Skeleton className="h-11 w-full rounded-xl" />
+          <Skeleton className="h-11 w-full rounded-xl" />
+          <Skeleton className="h-11 w-full rounded-xl" />
+        </div>
+
+        <Skeleton className="h-14 w-full rounded-2xl" />
       </div>
     );
   }

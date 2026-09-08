@@ -1,6 +1,7 @@
 "use client";
 
 import { IconRenderer } from "@/assets/icons/iconRenderer";
+import { Skeleton } from "@/components/ui/skeleton";
 import { formatDate } from "@/lib/format";
 import { useCompanyByIdQuery } from "@/module/companies/hooks";
 import { OrderSummary } from "../types";
@@ -36,5 +37,27 @@ export function OrderCard({ order, onSelect }: { order: OrderSummary; onSelect: 
         )}
       </div>
     </button>
+  );
+}
+
+export function OrderCardSkeleton() {
+  return (
+    <div className="w-full rounded-2xl border border-border bg-background/60 p-3.5">
+      <div className="flex items-start justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2">
+          <Skeleton className="size-8 shrink-0 rounded-xl" />
+          <div className="min-w-0 space-y-1.5">
+            <Skeleton className="h-3.5 w-24" />
+            <Skeleton className="h-2.5 w-16" />
+          </div>
+        </div>
+        <Skeleton className="h-5 w-16 rounded-full" />
+      </div>
+
+      <div className="mt-2.5 flex items-center justify-between border-t border-border pt-2.5">
+        <Skeleton className="h-2.5 w-12" />
+        <Skeleton className="h-2.5 w-20" />
+      </div>
+    </div>
   );
 }

@@ -5,8 +5,7 @@ import { useRouter } from "next/navigation";
 import { OrderStatus } from "@/module/orders/types";
 import { useOrdersQuery } from "@/module/orders/hooks";
 import { OrderFilterTabs } from "@/module/orders/components/order-filter-tabs";
-import { OrderCard } from "@/module/orders/components/order-card";
-import { SkeletonCard } from "@/components/ui/skeleton";
+import { OrderCard, OrderCardSkeleton } from "@/module/orders/components/order-card";
 import { EmptyState } from "@/components/tredro/empty-state";
 
 export default function OrdersPage() {
@@ -22,8 +21,8 @@ export default function OrdersPage() {
 
       {isLoading ? (
         <div className="space-y-2">
-          <SkeletonCard />
-          <SkeletonCard />
+          <OrderCardSkeleton />
+          <OrderCardSkeleton />
         </div>
       ) : orders.length === 0 ? (
         <EmptyState variant="orders" size="sm" />
