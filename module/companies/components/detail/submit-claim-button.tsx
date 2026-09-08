@@ -17,7 +17,6 @@ export function SubmitClaimButton({ company }: { company: Company }) {
       </Button>
       <ClaimFormDrawer
         companyId={company.id}
-        companyName={company.name}
         open={open}
         onOpenChange={setOpen}
       />

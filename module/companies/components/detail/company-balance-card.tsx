@@ -2,12 +2,12 @@
 
 import { IconRenderer } from "@/assets/icons/iconRenderer";
 import { formatCurrency } from "@/lib/format";
-import { useInvoicesByCompanyQuery } from "@/module/invoices/hooks";
+import { useInvoicesQuery } from "@/module/invoices/hooks";
 import { Company } from "../../types";
 import { SubmitClaimButton } from "./submit-claim-button";
 
 export function CompanyBalanceCard({ company }: { company: Company }) {
-  const { data: invoices = [] } = useInvoicesByCompanyQuery(company.id, company.name);
+  const { data: invoices = [] } = useInvoicesQuery({ company: company.id, outstanding: true });
   const balanceDue = invoices.reduce((sum, i) => sum + Number(i.balance_due), 0);
 
   return (

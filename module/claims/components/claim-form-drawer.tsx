@@ -24,22 +24,20 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { IconRenderer } from "@/assets/icons/iconRenderer";
 import { formatCurrency, formatDate } from "@/lib/format";
-import { useInvoicesByCompanyQuery } from "@/module/invoices/hooks";
+import { useInvoicesQuery } from "@/module/invoices/hooks";
 import { useCreateClaimMutation } from "../hooks";
 import { claimSchema, CLAIM_REASON_LABELS, type ClaimFormValues } from "../schema";
 
 export function ClaimFormDrawer({
   companyId,
-  companyName,
   open,
   onOpenChange,
 }: {
   companyId: number;
-  companyName: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
-  const { data: invoices = [] } = useInvoicesByCompanyQuery(companyId, companyName);
+  const { data: invoices = [] } = useInvoicesQuery({ company: companyId });
   const createClaimMutation = useCreateClaimMutation();
   const [photo, setPhoto] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);

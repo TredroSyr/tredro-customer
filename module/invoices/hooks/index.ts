@@ -1,26 +1,23 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { getInvoicesByCompany, getInvoiceById } from "../api";
+import { getInvoiceById, getInvoices } from "../api";
+import { InvoicesListParams } from "../types";
 
-export function useInvoicesByCompanyQuery(companyId: number | null, companyName = "") {
+export function useInvoicesQuery(params: InvoicesListParams = {}) {
   return useQuery({
-    queryKey: ["invoices", companyId],
-    queryFn: () => getInvoicesByCompany(companyId as number, companyName),
+    queryKey: ["invoices", params],
+    queryFn: () => getInvoices(params),
     select: (res) => res.data.invoices,
-    enabled: companyId !== null,
+    enabled: params.company !== undefined,
   });
 }
 
-export function useInvoiceByIdQuery(
-  companyId: number | null,
-  invoiceId: number | null,
-  companyName = "",
-) {
+export function useInvoiceByIdQuery(id: number | null) {
   return useQuery({
-    queryKey: ["invoice", companyId, invoiceId],
-    queryFn: () => getInvoiceById(companyId as number, invoiceId as number, companyName),
+    queryKey: ["invoice", id],
+    queryFn: () => getInvoiceById(id as number),
     select: (res) => res.data.invoice,
-    enabled: companyId !== null && invoiceId !== null,
+    enabled: id !== null,
   });
 }

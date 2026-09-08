@@ -23,9 +23,12 @@ export function InvoiceRow({
         <span className="font-mono text-xs font-bold">{invoice.number}</span>
         <Badge variant={meta.badge}>{meta.label}</Badge>
       </div>
-      <p className="mt-1 text-[11px] text-muted-foreground">{formatDate(invoice.date)}</p>
+      <div className="mt-1 flex items-center justify-between text-[11px] text-muted-foreground">
+        <span>{formatDate(invoice.date)}</span>
+        <span>{invoice.rep_name ?? "بيع مباشر"}</span>
+      </div>
       <div className="mt-2 flex items-center justify-between text-xs">
-        <span className="text-muted-foreground">الإجمالي</span>
+        <span className="text-muted-foreground">الإجمالي ({invoice.line_count})</span>
         <span className="font-mono font-bold">{formatCurrency(invoice.total_amount)}</span>
       </div>
       {Number(invoice.balance_due) > 0 && (
