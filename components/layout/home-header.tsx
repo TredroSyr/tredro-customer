@@ -70,15 +70,9 @@ export function HomeHeader() {
           initial={false}
           animate={collapse}
           transition={{ duration: 0.3, ease: "easeInOut" }}
-          className="flex items-center justify-between gap-3"
+          className="relative flex items-center"
         >
-          <div className="min-w-0 text-start">
-            <p className="text-xs text-white/80">مرحباً بك</p>
-            <p className="truncate text-sm font-extrabold text-white">
-              {user?.name || "زائر"}
-            </p>
-          </div>
-          <div className="flex shrink-0 items-center gap-2">
+          <div className="absolute left-0 top-1/2 -translate-y-1/2">
             <button
               type="button"
               onClick={() => setNotificationsOpen(true)}
@@ -99,7 +93,16 @@ export function HomeHeader() {
                 </span>
               )}
             </button>
+          </div>
 
+          <div className="mx-auto min-w-0 max-w-[60%] text-center">
+            <p className="text-xs text-white/80">مرحباً بك</p>
+            <p className="truncate text-sm font-extrabold text-white">
+              {user?.name || "زائر"}
+            </p>
+          </div>
+
+          <div className="absolute right-0 top-1/2 -translate-y-1/2">
             <ProfileMenu triggerClassName="grid size-9 shrink-0 place-items-center overflow-hidden rounded-2xl bg-primary-foreground/20 text-white active:scale-95" />
           </div>
         </motion.div>

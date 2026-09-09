@@ -51,12 +51,11 @@ export default function AppHeader({ onRefresh }: AppHeaderProps) {
 
   return (
     <header className="sticky top-0 z-30 border-b border-glass-border bg-glass px-4 pb-3 pt-[max(0.85rem,env(safe-area-inset-top))] backdrop-blur-2xl">
-      <div className="mx-auto flex max-w-md items-center justify-between gap-3">
-        <div className="flex shrink-0 items-center gap-2">
+      <div className="relative mx-auto flex max-w-md items-center">
+        <div className="absolute left-0 top-1/2 -translate-y-1/2">
           {notificationsButton(false)}
-          <ProfileMenu />
         </div>
-        <button type="button" onClick={onRefresh}>
+        <button type="button" onClick={onRefresh} className="mx-auto">
           <Image
             src="/tredro/full_logo.svg"
             alt="logo"
@@ -65,6 +64,9 @@ export default function AppHeader({ onRefresh }: AppHeaderProps) {
             className="h-auto w-[140px] cursor-pointer object-contain transition-all duration-200 hover:scale-105 active:scale-95"
           />
         </button>
+        <div className="absolute right-0 top-1/2 -translate-y-1/2">
+          <ProfileMenu />
+        </div>
       </div>
 
       <NotificationsDrawer
