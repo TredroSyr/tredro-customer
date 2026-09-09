@@ -3,7 +3,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { AxiosError } from "axios";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/toast";
 import { useAuthStore } from "../store/auth-store";
 import { signUp, signIn, signOut } from "../api";
 import { ApiErrorResponse, SignInPayload, SignUpPayload } from "../types";

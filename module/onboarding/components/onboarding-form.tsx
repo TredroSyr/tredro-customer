@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/toast";
 import { AnimatePresence, motion } from "framer-motion";
 import { Loader2, LocateFixed } from "lucide-react";
 
