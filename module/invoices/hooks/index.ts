@@ -9,7 +9,6 @@ export function useInvoicesQuery(params: InvoicesListParams = {}) {
     queryKey: ["invoices", params],
     queryFn: () => getInvoices(params),
     select: (res) => res.data.invoices,
-    enabled: params.company !== undefined,
   });
 }
 

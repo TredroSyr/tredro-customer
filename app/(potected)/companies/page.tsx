@@ -23,13 +23,13 @@ export default function CompaniesPage() {
       <div className="relative">
         <IconRenderer
           name="search_outlined"
-          className="pointer-events-none absolute top-1/2 start-3 size-4 -translate-y-1/2 text-muted-foreground"
+          className="pointer-events-none absolute top-1/2 start-2 size-4 -translate-y-1/2 text-muted-foreground"
         />
         <Input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="ابحث عن شركة..."
-          className="ps-9"
+          className="ps-11"
         />
       </div>
 

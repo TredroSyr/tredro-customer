@@ -28,6 +28,9 @@ export function InvoiceDetailDrawer({
       <DrawerContent>
         <DrawerHeader>
           <DrawerTitle>{invoice ? `فاتورة ${invoice.number}` : "الفاتورة"}</DrawerTitle>
+          {invoice && (
+            <p className="text-xs text-muted-foreground">{invoice.company_name}</p>
+          )}
         </DrawerHeader>
 
         {isLoading && (

@@ -23,6 +23,9 @@ export function InvoiceRow({
         <span className="font-mono text-xs font-bold">{invoice.number}</span>
         <Badge variant={meta.badge}>{meta.label}</Badge>
       </div>
+      <p className="mt-0.5 truncate text-xs font-bold text-foreground/80">
+        {invoice.company_name}
+      </p>
       <div className="mt-1 flex items-center justify-between text-[11px] text-muted-foreground">
         <span>{formatDate(invoice.date)}</span>
         <span>{invoice.rep_name ?? "بيع مباشر"}</span>

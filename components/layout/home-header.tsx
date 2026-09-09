@@ -72,8 +72,8 @@ export function HomeHeader() {
           className="flex items-center justify-between gap-3"
         >
           <div className="min-w-0 text-start">
-            <p className="text-xs /80">مرحباً بك</p>
-            <p className="truncate text-sm font-extrabold ">
+            <p className="text-xs text-white/80">مرحباً بك</p>
+            <p className="truncate text-sm font-extrabold text-white">
               {user?.name || "زائر"}
             </p>
           </div>
@@ -148,8 +148,8 @@ export function HomeHeader() {
         >
           <div className="flex items-center gap-3 rounded-2xl bg-primary-foreground/10 p-3">
             <div className="min-w-0 flex-1">
-              <p className="text-xs font-bold ">توصيل سريع لكل احتياجاتك</p>
-              <p className="mt-0.5 text-[11px] /70">
+              <p className="text-xs font-bold text-white">توصيل سريع لكل احتياجاتك</p>
+              <p className="mt-0.5 text-[11px] text-white/70">
                 تسوق من متاجرك المفضلة الآن
               </p>
             </div>

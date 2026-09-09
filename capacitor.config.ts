@@ -1,7 +1,7 @@
 import type { CapacitorConfig } from "@capacitor/cli";
 
 const config: CapacitorConfig = {
-  appId: "com.example.app",
+  appId: "com.tredrocustomer.app",
   appName: "tredro-customer",
   webDir: "out",
   // Route fetch/XHR through Android's native OkHttp stack instead of the
