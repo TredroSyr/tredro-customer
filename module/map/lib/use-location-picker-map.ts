@@ -83,6 +83,18 @@ export function useLocationPickerMap({
   }, []);
 
   useEffect(() => {
+    const container = containerRef.current;
+    if (!container || !mapReady) return;
+
+    const observer = new ResizeObserver(() => {
+      mapRef.current?.invalidateSize({ animate: false } as any);
+    });
+    observer.observe(container);
+
+    return () => observer.disconnect();
+  }, [mapReady]);
+
+  useEffect(() => {
     const L = leafletRef.current;
     const map = mapRef.current;
     if (!L || !map || !mapReady) return;

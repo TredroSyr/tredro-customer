@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { useShallow } from "zustand/react/shallow";
 import { IconRenderer } from "@/assets/icons/iconRenderer";
 import { useAuthStore } from "@/module/auth/store/auth-store";
@@ -46,19 +45,6 @@ export default function AccountPage() {
       </div>
 
       <div className="overflow-hidden rounded-2xl border border-border bg-card">
-        <Link
-          href="/invoices"
-          className="flex items-center justify-between px-4 py-3.5"
-        >
-          <span className="flex items-center gap-2.5 text-sm font-bold">
-            <IconRenderer name="receipt_outlined" className="size-4 text-primary" />
-            فواتيري
-          </span>
-          <IconRenderer name="arrow_left_outlined" className="size-4 text-muted-foreground" />
-        </Link>
-
-        <div className="border-t border-border" />
-
         <button
           type="button"
           onClick={toggleTheme}

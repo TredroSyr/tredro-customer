@@ -33,14 +33,25 @@ const TABS: Tab[] = [
     outlined: "receipt_outlined",
   },
   {
-    to: "/account",
-    label: "حسابي",
-    filled: "user_filled",
-    outlined: "user_outlined",
+    to: "/invoices",
+    label: "فواتيري",
+    filled: "card_filled",
+    outlined: "card_outlined",
   },
+  // {
+  //   to: "/account",
+  //   label: "حسابي",
+  //   filled: "user_filled",
+  //   outlined: "user_outlined",
+  // },
 ];
 
-const SPRING = { type: "spring", stiffness: 300, damping: 30, mass: 0.8 } as const;
+const SPRING = {
+  type: "spring",
+  stiffness: 300,
+  damping: 30,
+  mass: 0.8,
+} as const;
 
 export default function BottomNav() {
   const pathname = usePathname();
@@ -95,7 +106,10 @@ export default function BottomNav() {
                         initial={{ opacity: 0, x: -4 }}
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: -4 }}
-                        transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+                        transition={{
+                          duration: 0.25,
+                          ease: [0.22, 1, 0.36, 1],
+                        }}
                         className="overflow-hidden text-sm font-medium whitespace-nowrap"
                       >
                         {label}

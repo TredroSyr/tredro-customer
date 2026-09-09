@@ -11,7 +11,7 @@ export function LocationPickerMap({ point, onPick }: LocationPickerMapProps) {
   const { containerRef, mapReady } = useLocationPickerMap({ point, onPick });
 
   return (
-    <div className="relative h-64 w-full overflow-hidden rounded-2xl border border-border">
+    <div className="relative h-full min-h-[45vh] w-full overflow-hidden rounded-2xl border border-border">
       <div
         ref={containerRef}
         className="map-surface absolute inset-0 h-full w-full"

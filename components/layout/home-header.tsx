@@ -6,9 +6,9 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { IconRenderer } from "@/assets/icons/iconRenderer";
 import { useAuthStore } from "@/module/auth/store/auth-store";
-import { useCartStore } from "@/module/cart/store/use-cart-store";
 import { useCustomerNotificationsStore } from "@/store/use-customer-notifications-store";
 import { NotificationsDrawer } from "@/components/layout/notifications-drawer";
+import { ProfileMenu } from "@/components/layout/profile-menu";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
@@ -19,12 +19,6 @@ export function HomeHeader() {
   const user = useAuthStore((s) => s.user);
   const unread = useCustomerNotificationsStore(
     (s) => s.notifications.filter((n) => !n.read).length,
-  );
-  const cartCount = useCartStore((s) =>
-    Object.values(s.carts).reduce(
-      (sum, items) => sum + items.reduce((n, i) => n + i.quantity, 0),
-      0,
-    ),
   );
 
   const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -51,12 +45,19 @@ export function HomeHeader() {
   return (
     <header
       className={cn(
-        "sticky top-0 z-30 shadow-float transition-all duration-300",
+        "sticky top-0 z-30 overflow-hidden shadow-float transition-all duration-300",
         scrolled
           ? "rounded-b-2xl bg-primary/80 pt-[max(0.4rem,env(safe-area-inset-top))] backdrop-blur-md"
           : "rounded-b-[2.25rem] bg-primary pt-[max(0.85rem,env(safe-area-inset-top))]",
       )}
     >
+      <Image
+        src="/tredro/home.png"
+        alt=""
+        fill
+        aria-hidden
+        className="pointer-events-none object-cover opacity-20"
+      />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.18),transparent_55%),radial-gradient(circle_at_85%_0%,rgba(255,255,255,0.12),transparent_45%)]" />
 
       <div
@@ -99,19 +100,7 @@ export function HomeHeader() {
               )}
             </button>
 
-            <button
-              type="button"
-              onClick={() => router.push("/companies")}
-              aria-label="السلة"
-              className="relative grid size-9 shrink-0 place-items-center rounded-2xl bg-primary-foreground/20  active:scale-95"
-            >
-              <IconRenderer name="cart_outlined" className="size-4" />
-              {cartCount > 0 && (
-                <span className="absolute -top-1 -end-1 grid min-w-4 place-items-center rounded-full bg-destructive px-1 font-mono text-[9px] font-bold text-destructive-foreground">
-                  {cartCount}
-                </span>
-              )}
-            </button>
+            <ProfileMenu triggerClassName="grid size-9 shrink-0 place-items-center overflow-hidden rounded-2xl bg-primary-foreground/20 text-white active:scale-95" />
           </div>
         </motion.div>
 
@@ -148,19 +137,13 @@ export function HomeHeader() {
         >
           <div className="flex items-center gap-3 rounded-2xl bg-primary-foreground/10 p-3">
             <div className="min-w-0 flex-1">
-              <p className="text-xs font-bold text-white">توصيل سريع لكل احتياجاتك</p>
+              <p className="text-xs font-bold text-white">
+                تابع طلباتك وفواتيرك بسهولة
+              </p>
               <p className="mt-0.5 text-[11px] text-white/70">
-                تسوق من متاجرك المفضلة الآن
+                كل طلباتك وفواتيرك في مكان واحد
               </p>
             </div>
-            <Image
-              src="/tredro/boxes.png"
-              alt=""
-              width={90}
-              height={80}
-              aria-hidden
-              className="w-20 shrink-0 object-contain"
-            />
           </div>
         </motion.div>
       </div>

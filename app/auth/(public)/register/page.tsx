@@ -141,7 +141,7 @@ const RegisterPage = () => {
                         اسم المتجر
                       </FormLabel>
                       <FormControl>
-                        <Input {...field} placeholder="مثال: أحمد الحلبي" />
+                        <Input {...field} placeholder="اسم المتجر" />
                       </FormControl>
                       <FormMessage className="text-[11px] font-bold" />
                     </FormItem>

@@ -16,6 +16,7 @@ export interface OnboardingPayload {
   referral_code?: string;
   governorate?: string;
   region?: string;
+  address?: string;
   latitude?: number | null;
   longitude?: number | null;
 }

@@ -5,6 +5,7 @@ export const onboardingSchema = z.object({
   referral_code: z.string().trim().optional(),
   governorate: z.string().trim().optional(),
   region: z.string().trim().optional(),
+  address: z.string().trim().optional(),
   latitude: z.number({
     required_error: "الرجاء تحديد موقعك على الخريطة",
   }),

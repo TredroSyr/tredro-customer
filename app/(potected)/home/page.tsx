@@ -9,7 +9,7 @@ export default function HomePage() {
     <div className="space-y-6 pb-6">
       <NearbyCompaniesSection />
 
-      <RecentOrdersSection />
+      {/* <RecentOrdersSection /> */}
 
       <CompaniesSection />
     </div>

@@ -14,6 +14,7 @@ import { IconRenderer } from "@/assets/icons/iconRenderer";
 import { useKeyboardOpen } from "@/hooks/use-keyboard-open";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Form,
   FormControl,
@@ -33,10 +34,7 @@ import {
   GeoPermissionError,
   getCurrentPosition,
 } from "@/module/map/lib/geo";
-import {
-  reverseGeocode,
-  type ReverseGeocodeResult,
-} from "@/module/map/lib/reverse-geocode";
+import { useReverseGeocode } from "@/module/map/lib/use-reverse-geocode";
 import {
   useBusinessCategoriesQuery,
   useCompleteOnboardingMutation,
@@ -64,9 +62,8 @@ export function OnboardingForm() {
   const [pickerOpen, setPickerOpen] = useState(false);
   const [isLoadingLocation, setIsLoadingLocation] = useState(false);
   const [pickedPoint, setPickedPoint] = useState<[number, number] | null>(null);
-  const [isResolvingPlace, setIsResolvingPlace] = useState(false);
-  const [resolvedPlace, setResolvedPlace] =
-    useState<ReverseGeocodeResult | null>(null);
+  const { place: resolvedPlace, isResolving: isResolvingPlace } =
+    useReverseGeocode(pickedPoint);
 
   const form = useForm<OnboardingFormValues>({
     resolver: zodResolver(onboardingSchema),
@@ -80,39 +77,18 @@ export function OnboardingForm() {
     if (!pickedPoint) {
       form.setValue("latitude", undefined as unknown as number);
       form.setValue("longitude", undefined as unknown as number);
-      form.setValue("governorate", "");
-      form.setValue("region", "");
-      setResolvedPlace(null);
       return;
     }
 
     form.setValue("latitude", pickedPoint[0], { shouldValidate: true });
     form.setValue("longitude", pickedPoint[1], { shouldValidate: true });
-
-    let cancelled = false;
-    setIsResolvingPlace(true);
-    setResolvedPlace(null);
-
-    reverseGeocode(pickedPoint[0], pickedPoint[1])
-      .then((result) => {
-        if (cancelled) return;
-        form.setValue("governorate", result.governorate);
-        form.setValue("region", result.region);
-        setResolvedPlace(result);
-      })
-      .catch(() => {
-        if (cancelled) return;
-        form.setValue("governorate", "");
-        form.setValue("region", "");
-      })
-      .finally(() => {
-        if (!cancelled) setIsResolvingPlace(false);
-      });
-
-    return () => {
-      cancelled = true;
-    };
   }, [pickedPoint, form]);
+
+  useEffect(() => {
+    form.setValue("governorate", resolvedPlace?.governorate ?? "");
+    form.setValue("region", resolvedPlace?.region ?? "");
+    form.setValue("address", resolvedPlace?.displayName ?? "");
+  }, [resolvedPlace, form]);
 
   const onboardingMutation = useCompleteOnboardingMutation({
     onError: (error: AxiosError<ApiErrorResponse>) => {
@@ -168,6 +144,7 @@ export function OnboardingForm() {
         referral_code: values.referral_code?.trim() || undefined,
         governorate: values.governorate?.trim() || undefined,
         region: values.region?.trim() || undefined,
+        address: values.address?.trim() || undefined,
         latitude: Number(values.latitude.toFixed(6)),
         longitude: Number(values.longitude.toFixed(6)),
       },
@@ -390,31 +367,44 @@ export function OnboardingForm() {
                           (resolvedPlace.governorate ||
                             resolvedPlace.region ||
                             resolvedPlace.city) && (
-                            <div className="space-y-1 rounded-xl bg-primary/5 p-2.5">
-                              <div className="flex flex-wrap gap-x-1.5 gap-y-0.5 text-[11px] font-bold text-primary">
-                                {resolvedPlace.governorate && (
-                                  <span>{resolvedPlace.governorate}</span>
-                                )}
-                                {resolvedPlace.region && (
-                                  <>
-                                    <span className="text-primary/40">/</span>
-                                    <span>{resolvedPlace.region}</span>
-                                  </>
-                                )}
-                                {resolvedPlace.city && (
-                                  <>
-                                    <span className="text-primary/40">/</span>
-                                    <span>{resolvedPlace.city}</span>
-                                  </>
-                                )}
-                              </div>
-                              {resolvedPlace.displayName && (
-                                <p className="text-[10px] leading-relaxed text-muted-foreground">
-                                  {resolvedPlace.displayName}
-                                </p>
+                            <div className="flex flex-wrap gap-x-1.5 gap-y-0.5 rounded-xl bg-primary/5 p-2.5 text-[11px] font-bold text-primary">
+                              {resolvedPlace.governorate && (
+                                <span>{resolvedPlace.governorate}</span>
+                              )}
+                              {resolvedPlace.region && (
+                                <>
+                                  <span className="text-primary/40">/</span>
+                                  <span>{resolvedPlace.region}</span>
+                                </>
+                              )}
+                              {resolvedPlace.city && (
+                                <>
+                                  <span className="text-primary/40">/</span>
+                                  <span>{resolvedPlace.city}</span>
+                                </>
                               )}
                             </div>
                           )}
+                        <FormMessage className="text-[11px] font-bold" />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="address"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-[11px] font-bold text-primary">
+                          العنوان التفصيلي
+                        </FormLabel>
+                        <FormControl>
+                          <Textarea
+                            {...field}
+                            rows={2}
+                            placeholder="سيتم تعبئته تلقائياً بعد تحديد الموقع"
+                          />
+                        </FormControl>
                         <FormMessage className="text-[11px] font-bold" />
                       </FormItem>
                     )}
