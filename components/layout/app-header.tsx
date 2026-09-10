@@ -1,11 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { IconRenderer } from "@/assets/icons/iconRenderer";
 import { useUnreadNotificationsCountQuery } from "@/module/notifications/hooks";
-import { NotificationsDrawer } from "@/components/layout/notifications-drawer";
 import { HomeHeader } from "@/components/layout/home-header";
 import { ProfileMenu } from "@/components/layout/profile-menu";
 
@@ -15,11 +13,11 @@ interface AppHeaderProps {
 
 export default function AppHeader({ onRefresh }: AppHeaderProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const isHome = pathname === "/home";
 
   const { data: unreadCountData } = useUnreadNotificationsCountQuery();
   const unread = unreadCountData?.data?.unread_count ?? 0;
-  const [notificationsOpen, setNotificationsOpen] = useState(false);
 
   if (isHome) {
     return <HomeHeader />;
@@ -28,7 +26,7 @@ export default function AppHeader({ onRefresh }: AppHeaderProps) {
   const notificationsButton = (needsLight: boolean) => (
     <button
       type="button"
-      onClick={() => setNotificationsOpen(true)}
+      onClick={() => router.push("/notifications")}
       aria-label="الإشعارات"
       className={`relative grid size-9 shrink-0 place-items-center rounded-2xl active:scale-95 ${
         needsLight ? "bg-white/20 text-white" : "bg-secondary text-primary"
@@ -67,11 +65,6 @@ export default function AppHeader({ onRefresh }: AppHeaderProps) {
           <ProfileMenu />
         </div>
       </div>
-
-      <NotificationsDrawer
-        open={notificationsOpen}
-        onOpenChange={setNotificationsOpen}
-      />
     </header>
   );
 }

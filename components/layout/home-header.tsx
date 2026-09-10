@@ -7,7 +7,6 @@ import { motion } from "framer-motion";
 import { IconRenderer } from "@/assets/icons/iconRenderer";
 import { useAuthStore } from "@/module/auth/store/auth-store";
 import { useUnreadNotificationsCountQuery } from "@/module/notifications/hooks";
-import { NotificationsDrawer } from "@/components/layout/notifications-drawer";
 import { ProfileMenu } from "@/components/layout/profile-menu";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -20,7 +19,6 @@ export function HomeHeader() {
   const { data: unreadCountData } = useUnreadNotificationsCountQuery();
   const unread = unreadCountData?.data?.unread_count ?? 0;
 
-  const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [focused, setFocused] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -74,7 +72,7 @@ export function HomeHeader() {
           <div className="absolute left-0 top-1/2 -translate-y-1/2">
             <button
               type="button"
-              onClick={() => setNotificationsOpen(true)}
+              onClick={() => router.push("/notifications")}
               aria-label="الإشعارات"
               className="relative grid size-9 shrink-0 place-items-center rounded-2xl bg-primary-foreground/20  active:scale-95"
             >
@@ -149,11 +147,6 @@ export function HomeHeader() {
           </div>
         </motion.div>
       </div>
-
-      <NotificationsDrawer
-        open={notificationsOpen}
-        onOpenChange={setNotificationsOpen}
-      />
     </header>
   );
 }
