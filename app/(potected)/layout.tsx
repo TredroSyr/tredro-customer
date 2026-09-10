@@ -7,10 +7,14 @@ import { ProtectedRoute } from "@/guards/protected-route";
 import BottomNav, { NAV_H } from "@/layout/bottom-nav";
 import AppHeader from "@/components/layout/app-header";
 import { PullToRefresh } from "@/components/tredro/pull-to-refresh";
+import { useAuthStore } from "@/module/auth/store/auth-store";
+import { useRegisterPushNotifications } from "@/module/notifications/hooks/use-register-push-notifications";
 
 const MIN_SPIN_MS = 500;
 
 export default function ProtectedLayout({ children }: { children: ReactNode }) {
+  const isAuthenticated = useAuthStore((s) => !!s.accessToken);
+  useRegisterPushNotifications(isAuthenticated);
   const queryClient = useQueryClient();
   const pathname = usePathname();
   const isDetailPage = pathname?.includes("/detail");

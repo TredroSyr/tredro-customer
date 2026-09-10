@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { IconRenderer } from "@/assets/icons/iconRenderer";
-import { useCustomerNotificationsStore } from "@/store/use-customer-notifications-store";
+import { useUnreadNotificationsCountQuery } from "@/module/notifications/hooks";
 import { NotificationsDrawer } from "@/components/layout/notifications-drawer";
 import { HomeHeader } from "@/components/layout/home-header";
 import { ProfileMenu } from "@/components/layout/profile-menu";
@@ -17,9 +17,8 @@ export default function AppHeader({ onRefresh }: AppHeaderProps) {
   const pathname = usePathname();
   const isHome = pathname === "/home";
 
-  const unread = useCustomerNotificationsStore(
-    (s) => s.notifications.filter((n) => !n.read).length,
-  );
+  const { data: unreadCountData } = useUnreadNotificationsCountQuery();
+  const unread = unreadCountData?.data?.unread_count ?? 0;
   const [notificationsOpen, setNotificationsOpen] = useState(false);
 
   if (isHome) {

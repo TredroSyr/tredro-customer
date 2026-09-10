@@ -7,6 +7,8 @@ import { useShallow } from "zustand/react/shallow";
 import { IconRenderer } from "@/assets/icons/iconRenderer";
 import { useAuthStore } from "@/module/auth/store/auth-store";
 import { useSignOutMutation } from "@/module/auth/hooks";
+import { useUnregisterNotificationDeviceMutation } from "@/module/notifications/hooks";
+import { FCM_TOKEN_STORAGE_KEY } from "@/module/notifications/hooks/use-register-push-notifications";
 import { useThemeStore } from "@/store/use-theme-store";
 import { Button } from "@/components/ui/button";
 import {
@@ -33,6 +35,7 @@ const DEFAULT_TRIGGER_CLASSNAME =
 export function ProfileMenu({ triggerClassName }: ProfileMenuProps) {
   const user = useAuthStore((s) => s.user);
   const signOutMutation = useSignOutMutation();
+  const { mutate: unregisterDevice } = useUnregisterNotificationDeviceMutation();
   const { theme, toggleTheme } = useThemeStore(
     useShallow((s) => ({
       theme: s.theme,
@@ -46,6 +49,17 @@ export function ProfileMenu({ triggerClassName }: ProfileMenuProps) {
 
   const handleLogout = () => {
     setMenuOpen(false);
+
+    // This device's push token belongs to whoever is signed in on it (backend
+    // §4.3) — unregister it now, and clear the dedup cache so the next sign-in
+    // (possibly a different customer) always re-registers instead of assuming
+    // "same token = already registered".
+    const fcmToken = window.localStorage.getItem(FCM_TOKEN_STORAGE_KEY);
+    if (fcmToken) {
+      unregisterDevice(fcmToken);
+      window.localStorage.removeItem(FCM_TOKEN_STORAGE_KEY);
+    }
+
     signOutMutation.mutate();
   };
 

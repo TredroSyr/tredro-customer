@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { IconRenderer } from "@/assets/icons/iconRenderer";
 import { useAuthStore } from "@/module/auth/store/auth-store";
-import { useCustomerNotificationsStore } from "@/store/use-customer-notifications-store";
+import { useUnreadNotificationsCountQuery } from "@/module/notifications/hooks";
 import { NotificationsDrawer } from "@/components/layout/notifications-drawer";
 import { ProfileMenu } from "@/components/layout/profile-menu";
 import { Input } from "@/components/ui/input";
@@ -17,9 +17,8 @@ const SCROLL_THRESHOLD = 32;
 export function HomeHeader() {
   const router = useRouter();
   const user = useAuthStore((s) => s.user);
-  const unread = useCustomerNotificationsStore(
-    (s) => s.notifications.filter((n) => !n.read).length,
-  );
+  const { data: unreadCountData } = useUnreadNotificationsCountQuery();
+  const unread = unreadCountData?.data?.unread_count ?? 0;
 
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [search, setSearch] = useState("");
