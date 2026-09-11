@@ -1,9 +1,15 @@
 /** Latin (Western) digits everywhere, even inside Arabic-locale formatting — keeps numbers consistent instead of mixing Eastern Arabic-Indic and Latin digits. */
 const NUMBERING_SYSTEM = { numberingSystem: "latn" } as const;
 
-export function formatCurrency(value: string | number) {
+const CURRENCY_SYMBOLS: Record<string, string> = {
+  SYP: "ل.س",
+  USD: "$",
+};
+
+export function formatCurrency(value: string | number, currency: string = "SYP") {
   const n = typeof value === "string" ? parseFloat(value) : value;
-  return `${(Number.isFinite(n) ? n : 0).toLocaleString("ar-SY", NUMBERING_SYSTEM)} ل.س`;
+  const symbol = CURRENCY_SYMBOLS[currency] ?? currency;
+  return `${(Number.isFinite(n) ? n : 0).toLocaleString("ar-SY", NUMBERING_SYSTEM)} ${symbol}`;
 }
 
 export function formatQuantity(value: string) {

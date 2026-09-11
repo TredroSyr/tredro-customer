@@ -52,6 +52,8 @@ function OrderDetailContent() {
     );
   }
 
+  const hasUnpricedLine = order.lines.some((line) => line.unit_price === null);
+
   const handleCancel = () => {
     cancelMutation.mutate(order.id, {
       onSuccess: (response) => toast.success(response.message),
@@ -101,21 +103,33 @@ function OrderDetailContent() {
               <p className="truncate font-bold">{line.product_name}</p>
               <p className="text-[10px] text-muted-foreground">
                 {formatQuantity(line.desired_quantity)} {line.unit_name}
-                {line.unit_price ? ` × ${formatCurrency(line.unit_price)}` : ""}
+                {line.unit_price !== null &&
+                  ` × ${formatCurrency(line.unit_price, order.currency)}`}
               </p>
             </div>
             <span className="font-mono font-bold">
-              {line.line_total ? formatCurrency(line.line_total) : "السعر غير متاح"}
+              {line.line_total !== null
+                ? formatCurrency(line.line_total, order.currency)
+                : "السعر غير متاح"}
             </span>
           </div>
         ))}
       </div>
 
-      <div className="flex items-center justify-between rounded-2xl border border-border p-3.5">
-        <span className="text-sm font-bold">الإجمالي التقديري</span>
-        <span className="font-mono text-base font-extrabold text-primary">
-          {order.estimated_total ? formatCurrency(order.estimated_total) : "غير متاح بعد"}
-        </span>
+      <div className="rounded-2xl border border-border p-3.5">
+        <div className="flex items-center justify-between">
+          <span className="text-sm font-bold">الإجمالي التقديري</span>
+          <span className="font-mono text-base font-extrabold text-primary">
+            {order.estimated_total !== null
+              ? formatCurrency(order.estimated_total, order.currency)
+              : "السعر غير متاح"}
+          </span>
+        </div>
+        {order.estimated_total !== null && hasUnpricedLine && (
+          <p className="mt-1.5 text-[10px] text-muted-foreground">
+            بعض الأصناف بدون سعر، الإجمالي لا يشملها
+          </p>
+        )}
       </div>
 
       {order.status === "pending" && (

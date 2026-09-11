@@ -17,6 +17,7 @@ export interface OrderLine {
 export interface OrderSummary {
   id: number;
   company: number;
+  currency: string;
   customer: number;
   customer_name: string;
   customer_phone: string;

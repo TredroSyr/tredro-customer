@@ -86,7 +86,7 @@ export function CartReviewDrawer({
               عرض السلة ({itemCount})
             </span>
             <span className="font-mono text-sm font-extrabold">
-              {formatCurrency(String(total))}
+              {formatCurrency(String(total), company.currency)}
             </span>
           </button>
         </div>
@@ -120,7 +120,7 @@ export function CartReviewDrawer({
                 {itemCount} منتج
               </span>
               <span className="font-mono text-base font-extrabold text-primary">
-                {formatCurrency(String(total))}
+                {formatCurrency(String(total), company.currency)}
               </span>
             </div>
 
@@ -145,7 +145,7 @@ export function CartReviewDrawer({
                         </p>
                         <p className="text-[10px] text-muted-foreground">
                           {item.price
-                            ? formatCurrency(item.price)
+                            ? formatCurrency(item.price, company.currency)
                             : "السعر غير متاح"}{" "}
                           × {item.quantity}
                         </p>
