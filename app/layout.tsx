@@ -10,6 +10,7 @@ import { Toaster } from "@/components/ui/toast";
 import { QueryProvider } from "@/components/provider/QueryClientProvider";
 import ErudaLoader from "@/components/tredro/ErudaLoader";
 import HardwareBackButton from "@/components/tredro/HardwareBackButton";
+import UpdateChecker from "@/components/tredro/UpdateChecker";
 
 export const metadata: Metadata = {
   title: "Tredro | تسوّق من الشركات الموثوقة",
@@ -87,6 +88,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <QueryProvider>
           {children}
           <AppDownloadDrawer />
+          <UpdateChecker />
 
           <ErudaLoader />
           <Suspense fallback={null}>
