@@ -11,7 +11,7 @@ import TypingText from "@/components/tredro/typing-text";
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AxiosError } from "axios";
+import { toast } from "@/components/ui/toast";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -25,7 +25,7 @@ import { Input } from "@/components/ui/input";
 import { PhoneInput } from "@/components/tredro/phone-input";
 import { useRegisterMutation } from "@/module/auth/hooks";
 import { registerSchema, type RegisterFormValues } from "@/module/auth/schema";
-import { ApiErrorResponse } from "@/module/auth/types";
+import { useApiFormErrorHandler } from "@/hooks/use-api-form-error";
 
 const LOGO_TRANSITION = { duration: 0.35, ease: [0.32, 0.72, 0, 1] } as const;
 
@@ -50,26 +50,12 @@ const RegisterPage = () => {
     },
   });
 
+  const handleApiError = useApiFormErrorHandler(form);
+
   const registerMutation = useRegisterMutation({
-    onError: (error: AxiosError<ApiErrorResponse>) => {
-      const errors = error.response?.data?.errors;
-      if (errors) {
-        Object.entries(errors).forEach(([field, messages]) => {
-          const fieldMap: Record<string, keyof RegisterFormValues> = {
-            name: "name",
-            phone: "phone",
-            password: "password",
-          };
-          const mapped = fieldMap[field];
-          if (mapped) {
-            form.setError(mapped, { message: messages[0] });
-          }
-        });
-      } else {
-        form.setError("phone", {
-          message: error.response?.data?.message || "حدث خطأ، حاول مرة أخرى",
-        });
-      }
+    onError: (error) => {
+      const { message } = handleApiError(error);
+      toast.error(message);
     },
   });
 

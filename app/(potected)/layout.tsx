@@ -18,6 +18,7 @@ export default function ProtectedLayout({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient();
   const pathname = usePathname();
   const isDetailPage = pathname?.includes("/detail");
+  const isNotificationsPage = pathname?.includes("/notifications");
 
   const handleRefresh = useCallback(async () => {
     const startedAt = Date.now();
@@ -33,7 +34,7 @@ export default function ProtectedLayout({ children }: { children: ReactNode }) {
         className="min-h-dvh bg-background"
       >
         <AppHeader />
-        <main className="mx-auto max-w-md px-4 py-4">
+        <main className={`mx-auto max-w-md ${isNotificationsPage ? "" : "px-4 py-4"}`}>
           <PullToRefresh onRefresh={handleRefresh}>{children}</PullToRefresh>
         </main>
       </div>

@@ -9,9 +9,15 @@ import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 const MUTATING_METHODS = ["post", "put", "patch", "delete"];
 
 // Endpoints that are technically mutating but happen passively/in the
-// background (e.g. marking a notification read as soon as it's opened) —
-// not a deliberate user action, so they shouldn't get a sound either.
-const SILENT_URL_PATTERNS = [/notifications\/.*read/i];
+// background (e.g. marking a notification read as soon as it's opened, or
+// registering/unregistering a push token, or completing onboarding) — not a
+// deliberate user action with its own success/fail feedback already, so they
+// shouldn't get a sound either.
+const SILENT_URL_PATTERNS = [
+  /notifications\/.*read/i,
+  /notifications\/devices/i,
+  /customers\/onboarding/i,
+];
 
 const isMutatingRequest = (method?: string) =>
   !!method && MUTATING_METHODS.includes(method.toLowerCase());

@@ -27,10 +27,12 @@ export function CartReviewDrawer({
   company,
   open,
   onOpenChange,
+  hideTrigger = false,
 }: {
   company: Company;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  hideTrigger?: boolean;
 }) {
   const router = useRouter();
   const cart = useCartForCompany(company.id);
@@ -72,7 +74,7 @@ export function CartReviewDrawer({
 
   return (
     <>
-      {itemCount > 0 && !open && (
+      {!hideTrigger && itemCount > 0 && !open && (
         <div className="fixed inset-x-0 bottom-0 z-20 rounded-t-2xl bg-card p-4 shadow-float">
           <button
             type="button"

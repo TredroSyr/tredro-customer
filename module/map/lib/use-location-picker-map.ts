@@ -41,6 +41,7 @@ export function useLocationPickerMap({
 
     (async () => {
       const leafletModule = await import("leaflet");
+      await import("leaflet-rotate");
       const L = leafletModule.default;
       if (cancelled || !containerRef.current || mapRef.current) return;
       leafletRef.current = L;
@@ -51,7 +52,11 @@ export function useLocationPickerMap({
         zoomControl: false,
         attributionControl: true,
         preferCanvas: true,
-      });
+        rotate: true,
+        bearing: 0,
+        touchRotate: true,
+        shiftKeyRotate: true,
+      } as any);
 
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         maxZoom: 19,

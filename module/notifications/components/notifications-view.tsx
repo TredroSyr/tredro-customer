@@ -588,7 +588,7 @@ export function NotificationsView() {
       <div className="bg-card">
         <div
           role="tablist"
-          className="flex rounded-xl ring-1 ring-foreground/10 [&>button:not(:last-child)]:border-e [&>button:not(:last-child)]:border-border"
+          className="flex  ring-1 ring-foreground/10 [&>button:not(:last-child)]:border-e [&>button:not(:last-child)]:border-border"
         >
           <StatusTab
             icon="mail_outlined"

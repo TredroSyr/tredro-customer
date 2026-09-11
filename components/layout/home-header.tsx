@@ -82,7 +82,7 @@ export function HomeHeader() {
                     ? "notification_new_outlined"
                     : "notification_outlined"
                 }
-                className="size-4"
+                className="size-4 text-white"
               />
               {unread > 0 && (
                 <span className="absolute -top-1 -end-1 grid min-w-4 place-items-center rounded-full bg-destructive px-1 font-mono text-[9px] font-bold text-destructive-foreground">
@@ -93,8 +93,8 @@ export function HomeHeader() {
           </div>
 
           <div className="mx-auto min-w-0 max-w-[60%] text-center">
-            <p className="text-xs text-white/80">مرحباً بك</p>
-            <p className="truncate text-sm font-extrabold text-white">
+
+            <p className="truncate text-lg font-extrabold text-white">
               {user?.name || "زائر"}
             </p>
           </div>

@@ -5,7 +5,6 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AxiosError } from "axios";
 import { toast } from "@/components/ui/toast";
 import { AnimatePresence, motion } from "framer-motion";
 import { Loader2, LocateFixed } from "lucide-react";
@@ -27,7 +26,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/module/auth/store/auth-store";
-import { ApiErrorResponse } from "@/module/auth/types";
+import { useApiFormErrorHandler } from "@/hooks/use-api-form-error";
 import { LocationPickerDialog } from "@/module/map/components/location-picker-dialog";
 import {
   GeoInsecureContextError,
@@ -90,23 +89,12 @@ export function OnboardingForm() {
     form.setValue("address", resolvedPlace?.displayName ?? "");
   }, [resolvedPlace, form]);
 
+  const handleApiError = useApiFormErrorHandler(form);
+
   const onboardingMutation = useCompleteOnboardingMutation({
-    onError: (error: AxiosError<ApiErrorResponse>) => {
-      const errors = error.response?.data?.errors;
-      if (errors) {
-        Object.entries(errors).forEach(([field, messages]) => {
-          const fieldMap: Record<string, keyof OnboardingFormValues> = {
-            category: "category",
-            referral_code: "referral_code",
-          };
-          const mapped = fieldMap[field];
-          if (mapped) {
-            form.setError(mapped, { message: messages[0] });
-          }
-        });
-      } else {
-        toast.error(error.response?.data?.message || "حدث خطأ، حاول مرة أخرى");
-      }
+    onError: (error) => {
+      const { message } = handleApiError(error);
+      toast.error(message);
     },
   });
 
