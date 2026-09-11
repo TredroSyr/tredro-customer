@@ -91,12 +91,12 @@ export default function AppDownloadDrawer() {
           <span className="mb-2 text-sm font-medium text-primary">Tredro</span>
 
           <h2 className="mb-3 text-2xl font-bold leading-snug text-foreground">
-            تجربة تسوق أسهل مع تريدرو
+            اطلب من شركاتك المفضلة بسهولة
           </h2>
 
           <p className="mb-6 max-w-xs text-sm leading-relaxed text-muted-foreground">
-            حمّل تطبيق تريدرو وتابع طلباتك وتسوّق بسهولة أينما كنت — إشعارات
-            فورية، وتجربة أسرع من جوالك.
+            حمّل تطبيق Tredro وتصفّح المنتجات، اطلب من الشركات، وتابع
+            حالة طلباتك وفواتيرك أينما كنت — إشعارات فورية بكل تحديث.
           </p>
 
           <Button
@@ -104,7 +104,7 @@ export default function AppDownloadDrawer() {
             className="group relative mb-4 h-13 w-full overflow-hidden rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/30 transition-transform duration-300 active:scale-95 hover:scale-[1.02] hover:bg-primary/90"
           >
             <a
-              href="/downloads/tredro-dashborad.apk"
+              href="https://customer.tredro.online/download/tredro-customer.apk"
               download
               target="_blank"
               rel="noopener noreferrer"
