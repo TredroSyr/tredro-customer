@@ -9,6 +9,7 @@ import AppHeader from "@/components/layout/app-header";
 import { PullToRefresh } from "@/components/tredro/pull-to-refresh";
 import { useAuthStore } from "@/module/auth/store/auth-store";
 import { useRegisterPushNotifications } from "@/module/notifications/hooks/use-register-push-notifications";
+import UpdateChecker from "@/components/tredro/UpdateChecker";
 
 const MIN_SPIN_MS = 500;
 
@@ -29,6 +30,7 @@ export default function ProtectedLayout({ children }: { children: ReactNode }) {
 
   return (
     <ProtectedRoute>
+      <UpdateChecker />
       <div
         style={{ paddingBottom: isDetailPage ? 0 : NAV_H }}
         className="min-h-dvh bg-background"
