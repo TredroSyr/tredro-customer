@@ -10,6 +10,7 @@ import { Toaster } from "@/components/ui/toast";
 import { QueryProvider } from "@/components/provider/QueryClientProvider";
 
 import HardwareBackButton from "@/components/tredro/HardwareBackButton";
+import DeepLinkHandler from "@/components/tredro/DeepLinkHandler";
 
 export const metadata: Metadata = {
   title: "Tredro | تسوّق من الشركات الموثوقة",
@@ -91,6 +92,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <Suspense fallback={null}>
             <HardwareBackButton />
           </Suspense>
+          <DeepLinkHandler />
 
           <Toaster />
         </QueryProvider>
