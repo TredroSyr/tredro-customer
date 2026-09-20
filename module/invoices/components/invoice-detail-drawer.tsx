@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef, useState } from "react";
 import {
   Drawer,
   DrawerContent,
@@ -7,10 +8,16 @@ import {
   DrawerTitle,
 } from "@/components/ui/drawer";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { toast } from "@/components/ui/toast";
+import { IconRenderer } from "@/assets/icons/iconRenderer";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatCurrency, formatDate, formatQuantity, formatUnit } from "@/lib/format";
 import { INVOICE_STATUS_META, PAYMENT_SOURCE_LABEL, REFUND_METHOD_LABEL } from "../lib/utils";
 import { useInvoiceByIdQuery } from "../hooks";
+import { downloadInvoicePdf } from "../lib/download";
+import { renderNodeToPdfBlob } from "../lib/pdf";
+import { InvoicePrintTemplate } from "./invoice-print-template";
 
 export function InvoiceDetailDrawer({
   invoiceId,
@@ -22,6 +29,22 @@ export function InvoiceDetailDrawer({
   onOpenChange: (open: boolean) => void;
 }) {
   const { data: invoice, isLoading } = useInvoiceByIdQuery(invoiceId);
+  const printRef = useRef<HTMLDivElement>(null);
+  const [isExporting, setIsExporting] = useState(false);
+
+  const handleDownload = async () => {
+    if (!invoice || !printRef.current) return;
+    setIsExporting(true);
+    try {
+      const blob = await renderNodeToPdfBlob(printRef.current);
+      const where = await downloadInvoicePdf(blob, `invoice-${invoice.number}.pdf`);
+      toast.success(where === "device" ? "تم حفظ الفاتورة في المستندات" : "تم تنزيل الفاتورة");
+    } catch {
+      toast.error("تعذّر تجهيز ملف PDF");
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
@@ -137,6 +160,20 @@ export function InvoiceDetailDrawer({
                 ))}
               </div>
             )}
+
+            <Button
+              type="button"
+              className="h-10 w-full gap-1.5 rounded-xl text-xs font-bold"
+              disabled={isExporting}
+              onClick={handleDownload}
+            >
+              <IconRenderer name="download_outlined" className="size-4" />
+              {isExporting ? "جارٍ التجهيز..." : "تحميل PDF"}
+            </Button>
+
+            <div style={{ position: "fixed", top: 0, left: -9999, zIndex: -1 }} aria-hidden="true">
+              <InvoicePrintTemplate ref={printRef} invoice={invoice} />
+            </div>
           </div>
         )}
       </DrawerContent>
