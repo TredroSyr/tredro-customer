@@ -1,5 +1,6 @@
 "use client";
 
+import { MotionConfig, motion } from "framer-motion";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/tredro/empty-state";
 import { Product } from "../types";
@@ -33,10 +34,23 @@ export function ProductGrid({
   }
 
   return (
-    <div className="grid grid-cols-2 gap-3">
-      {products.map((product) => (
-        <ProductCard key={product.id} product={product} companyId={companyId} />
-      ))}
-    </div>
+    <MotionConfig reducedMotion="user">
+      <div className="grid grid-cols-2 gap-3">
+        {products.map((product, index) => (
+          <motion.div
+            key={product.id}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{
+              duration: 0.25,
+              ease: "easeOut",
+              delay: Math.min(index, 8) * 0.04,
+            }}
+          >
+            <ProductCard product={product} companyId={companyId} />
+          </motion.div>
+        ))}
+      </div>
+    </MotionConfig>
   );
 }

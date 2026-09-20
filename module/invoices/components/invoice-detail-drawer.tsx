@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/drawer";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { formatCurrency, formatDate, formatQuantity } from "@/lib/format";
+import { formatCurrency, formatDate, formatQuantity, formatUnit } from "@/lib/format";
 import { INVOICE_STATUS_META, PAYMENT_SOURCE_LABEL, REFUND_METHOD_LABEL } from "../lib/utils";
 import { useInvoiceByIdQuery } from "../hooks";
 
@@ -24,7 +24,7 @@ export function InvoiceDetailDrawer({
   const { data: invoice, isLoading } = useInvoiceByIdQuery(invoiceId);
 
   return (
-    <Drawer open={open} onOpenChange={onOpenChange} swipeDirection="up">
+    <Drawer open={open} onOpenChange={onOpenChange}>
       <DrawerContent>
         <DrawerHeader>
           <DrawerTitle>{invoice ? `فاتورة ${invoice.number}` : "الفاتورة"}</DrawerTitle>
@@ -59,7 +59,7 @@ export function InvoiceDetailDrawer({
                   <div className="min-w-0">
                     <p className="truncate font-bold">{line.product_name}</p>
                     <p className="text-[10px] text-muted-foreground">
-                      {formatQuantity(line.quantity)} {line.unit_name} × {formatCurrency(line.unit_price)}
+                      {formatQuantity(line.quantity)} {formatUnit(line.unit_name)} × {formatCurrency(line.unit_price)}
                     </p>
                     {line.returned_quantity && (
                       <p className="text-[10px] text-destructive">

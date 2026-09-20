@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { AnimatePresence, MotionConfig, motion } from "framer-motion";
 import { toast } from "@/components/ui/toast";
 import {
   Drawer,
@@ -73,24 +74,48 @@ export function CartReviewDrawer({
   };
 
   return (
-    <>
-      {!hideTrigger && itemCount > 0 && !open && (
-        <div className="fixed inset-x-0 bottom-0 z-20 rounded-t-2xl bg-card p-4 shadow-float">
-          <button
-            type="button"
-            onClick={() => onOpenChange(true)}
-            className="flex w-full items-center justify-between rounded-2xl bg-primary px-4 py-3.5 text-primary-foreground"
+    <MotionConfig reducedMotion="user">
+      <AnimatePresence>
+        {!hideTrigger && itemCount > 0 && !open && (
+          <motion.div
+            key="cart-bar"
+            initial={{ y: "100%" }}
+            animate={{ y: 0 }}
+            exit={{ y: "100%" }}
+            transition={{ type: "spring", stiffness: 400, damping: 34 }}
+            className="fixed inset-x-0 bottom-0 z-20 rounded-t-2xl bg-card p-4 shadow-float"
           >
-            <span className="flex items-center gap-2 text-sm font-extrabold">
-              <IconRenderer name="cart_outlined" className="size-4" />
-              عرض السلة ({itemCount})
-            </span>
-            <span className="font-mono text-sm font-extrabold">
-              {formatCurrency(String(total), company.currency)}
-            </span>
-          </button>
-        </div>
-      )}
+            <motion.button
+              type="button"
+              whileTap={{ scale: 0.98 }}
+              onClick={() => onOpenChange(true)}
+              className="flex w-full items-center justify-between rounded-2xl bg-primary px-4 py-3.5 text-primary-foreground"
+            >
+              <span className="flex items-center gap-2 text-sm font-extrabold">
+                <IconRenderer name="cart_outlined" className="size-4" />
+                <span>عرض السلة</span>
+                <motion.span
+                  key={itemCount}
+                  initial={{ scale: 1.5 }}
+                  animate={{ scale: 1 }}
+                  transition={{ type: "spring", stiffness: 500, damping: 18 }}
+                >
+                  ({itemCount})
+                </motion.span>
+              </span>
+              <motion.span
+                key={total}
+                initial={{ opacity: 0.4, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
+                className="font-mono text-sm font-extrabold"
+              >
+                {formatCurrency(String(total), company.currency)}
+              </motion.span>
+            </motion.button>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <Drawer
         open={open}
@@ -134,69 +159,87 @@ export function CartReviewDrawer({
             {expanded && (
               <div className="animate-in fade-in-0 slide-in-from-bottom-2 space-y-4 duration-300">
                 <div className="space-y-2">
-                  {cart.map((item) => (
-                    <div
-                      key={item.product_id}
-                      className="flex items-center justify-between gap-2 rounded-xl bg-secondary px-3 py-2"
-                    >
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate text-xs font-bold">
-                          {item.product_name}
-                        </p>
-                        <p className="text-[10px] text-muted-foreground">
-                          {item.price
-                            ? formatCurrency(item.price, company.currency)
-                            : "السعر غير متاح"}{" "}
-                          × {item.quantity}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setQuantity(
-                              company.id,
-                              item.product_id,
-                              item.quantity - 1,
-                            )
-                          }
-                          className="grid size-6 place-items-center rounded-full bg-background text-foreground"
-                        >
-                          <IconRenderer
-                            name="minus_outlined"
-                            className="size-3"
-                          />
-                        </button>
-                        <span className="w-5 text-center text-xs font-bold">
-                          {item.quantity}
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setQuantity(
-                              company.id,
-                              item.product_id,
-                              item.quantity + 1,
-                            )
-                          }
-                          className="grid size-6 place-items-center rounded-full bg-background text-foreground"
-                        >
-                          <IconRenderer
-                            name="plus_outlined"
-                            className="size-3"
-                          />
-                        </button>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => removeItem(company.id, item.product_id)}
-                        className="text-muted-foreground"
-                        aria-label="حذف"
+                  <AnimatePresence initial={false} mode="popLayout">
+                    {cart.map((item) => (
+                      <motion.div
+                        key={item.product_id}
+                        layout
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, x: 40 }}
+                        transition={{ duration: 0.2, ease: "easeOut" }}
+                        className="flex items-center justify-between gap-2 rounded-xl bg-secondary px-3 py-2"
                       >
-                        <IconRenderer name="bin_outlined" className="size-4" />
-                      </button>
-                    </div>
-                  ))}
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-xs font-bold">
+                            {item.product_name}
+                          </p>
+                          <p className="text-[10px] text-muted-foreground">
+                            {item.price
+                              ? formatCurrency(item.price, company.currency)
+                              : "السعر غير متاح"}{" "}
+                            × {item.quantity}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setQuantity(
+                                company.id,
+                                item.product_id,
+                                item.quantity - 1,
+                              )
+                            }
+                            className="grid size-6 place-items-center rounded-full bg-background text-foreground"
+                          >
+                            <IconRenderer
+                              name="minus_outlined"
+                              className="size-3"
+                            />
+                          </button>
+                          <motion.span
+                            key={item.quantity}
+                            initial={{ opacity: 0, scale: 0.6 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ duration: 0.15, ease: "easeOut" }}
+                            className="w-5 text-center text-xs font-bold"
+                          >
+                            {item.quantity}
+                          </motion.span>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setQuantity(
+                                company.id,
+                                item.product_id,
+                                item.quantity + 1,
+                              )
+                            }
+                            className="grid size-6 place-items-center rounded-full bg-background text-foreground"
+                          >
+                            <IconRenderer
+                              name="plus_outlined"
+                              className="size-3"
+                            />
+                          </button>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            removeItem(company.id, item.product_id)
+                          }
+                          className="text-muted-foreground"
+                          aria-label="حذف"
+                        >
+                          <IconRenderer
+                            name="bin_outlined"
+                            className="size-4"
+                          />
+                        </button>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
                 </div>
 
                 <div className="space-y-1.5">
@@ -238,6 +281,6 @@ export function CartReviewDrawer({
           </DrawerFooter>
         </DrawerContent>
       </Drawer>
-    </>
+    </MotionConfig>
   );
 }

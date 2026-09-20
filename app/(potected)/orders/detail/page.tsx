@@ -7,8 +7,11 @@ import { IconRenderer } from "@/assets/icons/iconRenderer";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/tredro/empty-state";
-import { formatCurrency, formatDate, formatQuantity } from "@/lib/format";
-import { useCancelOrderMutation, useOrderByIdQuery } from "@/module/orders/hooks";
+import { formatCurrency, formatDate, formatQuantity, formatUnit } from "@/lib/format";
+import {
+  useCancelOrderMutation,
+  useOrderByIdQuery,
+} from "@/module/orders/hooks";
 import { OrderStatusBadge } from "@/module/orders/components/order-status-badge";
 import { useCompanyByIdQuery } from "@/module/companies/hooks";
 
@@ -16,7 +19,9 @@ function OrderDetailContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const id = Number(searchParams.get("id"));
-  const { data: order, isLoading } = useOrderByIdQuery(Number.isFinite(id) ? id : null);
+  const { data: order, isLoading } = useOrderByIdQuery(
+    Number.isFinite(id) ? id : null,
+  );
   const { data: company } = useCompanyByIdQuery(order?.company ?? null);
   const cancelMutation = useCancelOrderMutation();
 
@@ -57,7 +62,8 @@ function OrderDetailContent() {
   const handleCancel = () => {
     cancelMutation.mutate(order.id, {
       onSuccess: (response) => toast.success(response.message),
-      onError: () => toast.error("تعذر إلغاء الطلب، يرجى تحديث الصفحة والمحاولة مجدداً"),
+      onError: () =>
+        toast.error("تعذر إلغاء الطلب، يرجى تحديث الصفحة والمحاولة مجدداً"),
     });
   };
 
@@ -73,10 +79,14 @@ function OrderDetailContent() {
 
       <div className="rounded-2xl border border-border bg-background/60 p-4">
         <div className="flex items-center justify-between">
-          <h1 className="text-sm font-extrabold">{company?.name ?? `طلب #${order.id}`}</h1>
+          <h1 className="text-sm font-extrabold">
+            {company?.name ?? `طلب #${order.id}`}
+          </h1>
           <OrderStatusBadge status={order.status} />
         </div>
-        <p className="mt-1 text-[11px] text-muted-foreground">{formatDate(order.created_at)}</p>
+        <p className="mt-1 text-[11px] text-muted-foreground">
+          {formatDate(order.created_at)}
+        </p>
         {order.rep_name && (
           <p className="mt-2 flex items-center gap-1.5 text-xs text-muted-foreground">
             <IconRenderer name="store_outlined" className="size-3.5" />
@@ -84,7 +94,9 @@ function OrderDetailContent() {
           </p>
         )}
         {order.notes && (
-          <p className="mt-1 text-xs text-muted-foreground">ملاحظات: {order.notes}</p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            ملاحظات: {order.notes}
+          </p>
         )}
         {order.status === "rejected" && order.rejection_reason && (
           <p className="mt-2 rounded-xl bg-destructive/10 px-3 py-2 text-xs text-destructive">
@@ -102,7 +114,7 @@ function OrderDetailContent() {
             <div className="min-w-0">
               <p className="truncate font-bold">{line.product_name}</p>
               <p className="text-[10px] text-muted-foreground">
-                {formatQuantity(line.desired_quantity)} {line.unit_name}
+                {formatQuantity(line.desired_quantity)} {formatUnit(line.unit_name)}
                 {line.unit_price !== null &&
                   ` × ${formatCurrency(line.unit_price, order.currency)}`}
               </p>
@@ -128,6 +140,12 @@ function OrderDetailContent() {
         {order.estimated_total !== null && hasUnpricedLine && (
           <p className="mt-1.5 text-[10px] text-muted-foreground">
             بعض الأصناف بدون سعر، الإجمالي لا يشملها
+          </p>
+        )}
+        {order.status === "pending" && (
+          <p className="mt-1.5 text-[10px] text-muted-foreground">
+            هذا طلب أولي وليس تأكيداً نهائياً. سيتواصل معك المندوب لتأكيد
+            الأسعار والكميات.
           </p>
         )}
       </div>

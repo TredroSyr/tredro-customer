@@ -39,7 +39,7 @@ export default function AppHeader({ onRefresh }: AppHeaderProps) {
         className="size-4"
       />
       {unread > 0 && (
-        <span className="absolute -top-1 -end-1 grid min-w-4 place-items-center rounded-full bg-destructive px-1 font-mono text-[9px] font-bold text-destructive-foreground">
+        <span className="absolute -top-1  -end-1 grid min-w-4 place-items-center rounded-full bg-destructive px-1 font-mono text-[9px] font-bold text-white">
           {unread}
         </span>
       )}
