@@ -9,6 +9,7 @@ export type CompanyDetailTab =
   | "products"
   | "invoices"
   | "orders"
+  | "claims"
   | "account"
   | "balance";
 
@@ -35,6 +36,12 @@ const TABS: {
     label: "الفواتير",
     iconFilled: "payment_filled",
     iconOutlined: "payment_outlined",
+  },
+  {
+    value: "claims",
+    label: "مطالباتي",
+    iconFilled: "report_filled",
+    iconOutlined: "report_outlined",
   },
   {
     value: "balance",

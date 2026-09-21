@@ -1,4 +1,10 @@
 {
+  "rewrites": [
+    {
+      "source": "/download/tredro-customer.apk",
+      "destination": "https://g7uxiqk5angfkrhm.public.blob.vercel-storage.com/tredro-customer.apk"
+    }
+  ],
   "headers": [
     {
       "source": "/.well-known/assetlinks.json",

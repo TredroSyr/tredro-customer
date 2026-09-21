@@ -14,6 +14,7 @@ import {
 import { CompanyProductsTab } from "@/module/companies/components/detail/company-products-tab";
 import { CompanyInvoicesTab } from "@/module/companies/components/detail/company-invoices-tab";
 import { CompanyOrdersTab } from "@/module/companies/components/detail/company-orders-tab";
+import { CompanyClaimsTab } from "@/module/companies/components/detail/company-claims-tab";
 import { CompanyAccountTab } from "@/module/companies/components/detail/company-account-tab";
 import { CompanyBalanceCard } from "@/module/companies/components/detail/company-balance-card";
 
@@ -78,6 +79,7 @@ function CompanyDetailContent() {
         {tab === "products" && <CompanyProductsTab company={company} />}
         {tab === "invoices" && <CompanyInvoicesTab company={company} />}
         {tab === "orders" && <CompanyOrdersTab company={company} />}
+        {tab === "claims" && <CompanyClaimsTab company={company} />}
 
         {tab === "balance" && <CompanyBalanceCard company={company} />}
       </div>

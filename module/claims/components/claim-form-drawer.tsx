@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "@/components/ui/toast";
@@ -21,12 +21,27 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/tredro/empty-state";
 import { IconRenderer } from "@/assets/icons/iconRenderer";
+import { cn } from "@/lib/utils";
 import { formatCurrency, formatDate } from "@/lib/format";
 import { useInvoicesQuery } from "@/module/invoices/hooks";
+import { INVOICE_STATUS_META } from "@/module/invoices/lib/utils";
 import { useCreateClaimMutation } from "../hooks";
+import {
+  CameraPermissionError,
+  isNativeCamera,
+  pickNativePhoto,
+  type PhotoSource,
+} from "../lib/photo";
 import { claimSchema, CLAIM_REASON_LABELS, type ClaimFormValues } from "../schema";
+
+const PHOTO_SOURCES = [
+  { source: "camera", label: "التقاط صورة", icon: "image_outlined" },
+  { source: "gallery", label: "من المعرض", icon: "gallery_outlined" },
+] as const;
 
 export function ClaimFormDrawer({
   companyId,
@@ -37,10 +52,14 @@ export function ClaimFormDrawer({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
-  const { data: invoices = [] } = useInvoicesQuery({ company: companyId });
+  const { data: invoices = [], isLoading: invoicesLoading } = useInvoicesQuery({
+    company: companyId,
+  });
   const createClaimMutation = useCreateClaimMutation();
   const [photo, setPhoto] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
+  const galleryInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<ClaimFormValues>({
     resolver: zodResolver(claimSchema),
@@ -52,12 +71,44 @@ export function ClaimFormDrawer({
     },
   });
 
-  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const setPickedPhoto = (file: File | null) => {
+    setPhotoPreview((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return file ? URL.createObjectURL(file) : null;
+    });
     setPhoto(file);
-    setPhotoPreview(URL.createObjectURL(file));
   };
+
+  // Web fallback: the browser asks for camera access itself when the capture input opens.
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (file) setPickedPhoto(file);
+  };
+
+  const handlePickPhoto = async (source: PhotoSource) => {
+    if (!isNativeCamera()) {
+      (source === "camera" ? cameraInputRef : galleryInputRef).current?.click();
+      return;
+    }
+    try {
+      const file = await pickNativePhoto(source);
+      if (file) setPickedPhoto(file);
+    } catch (err) {
+      toast.error(
+        err instanceof CameraPermissionError
+          ? "تم رفض إذن الكاميرا. فعّله من إعدادات التطبيق لالتقاط صورة"
+          : "تعذّر الحصول على الصورة، حاول مرة أخرى",
+      );
+    }
+  };
+
+  // A lone invoice is the obvious choice — no reason to make the user tap it.
+  useEffect(() => {
+    if (open && invoices.length === 1 && !form.getValues("invoice_id")) {
+      form.setValue("invoice_id", invoices[0].id);
+    }
+  }, [open, invoices, form]);
 
   const onSubmit = (values: ClaimFormValues) => {
     const invoice = invoices.find((i) => i.id === values.invoice_id);
@@ -77,8 +128,7 @@ export function ClaimFormDrawer({
         onSuccess: (response) => {
           toast.success(response.message);
           form.reset();
-          setPhoto(null);
-          setPhotoPreview(null);
+          setPickedPhoto(null);
           onOpenChange(false);
         },
       },
@@ -86,7 +136,7 @@ export function ClaimFormDrawer({
   };
 
   return (
-    <Drawer open={open} onOpenChange={onOpenChange} swipeDirection="up">
+    <Drawer open={open} onOpenChange={onOpenChange} showSwipeHandle>
       <DrawerContent>
         <DrawerHeader>
           <DrawerTitle>إرسال مطالبة</DrawerTitle>
@@ -106,30 +156,65 @@ export function ClaimFormDrawer({
                     <FormLabel className="text-[11px] font-bold text-primary">
                       الفاتورة المرتبطة
                     </FormLabel>
-                    <div className="space-y-1.5">
-                      {invoices.map((invoice) => (
-                        <button
-                          key={invoice.id}
-                          type="button"
-                          onClick={() => field.onChange(invoice.id)}
-                          className={`flex w-full items-center justify-between rounded-xl border px-3 py-2 text-start text-xs transition-colors ${
-                            field.value === invoice.id
-                              ? "border-primary bg-primary/8"
-                              : "border-border"
-                          }`}
-                        >
-                          <span>
-                            <span className="font-mono font-bold">{invoice.number}</span>
-                            <span className="ms-2 text-muted-foreground">
-                              {formatDate(invoice.date)}
-                            </span>
-                          </span>
-                          <span className="font-mono font-bold">
-                            {formatCurrency(invoice.total_amount)}
-                          </span>
-                        </button>
-                      ))}
-                    </div>
+                    {invoicesLoading ? (
+                      <div className="h-24 animate-pulse rounded-2xl bg-secondary" />
+                    ) : invoices.length === 0 ? (
+                      <EmptyState variant="invoices" size="sm" />
+                    ) : (
+                      <div
+                        role="radiogroup"
+                        className="max-h-56 space-y-2 overflow-y-auto"
+                      >
+                        {invoices.map((invoice) => {
+                          const selected = field.value === invoice.id;
+                          const meta = INVOICE_STATUS_META[invoice.status];
+                          return (
+                            <button
+                              key={invoice.id}
+                              type="button"
+                              role="radio"
+                              aria-checked={selected}
+                              onClick={() => field.onChange(invoice.id)}
+                              className={cn(
+                                "flex w-full items-center gap-3 rounded-2xl border p-3 text-start transition-colors",
+                                selected
+                                  ? "border-primary bg-primary/5 ring-1 ring-primary"
+                                  : "border-border bg-background/60 hover:border-primary/50",
+                              )}
+                            >
+                              <span
+                                className={cn(
+                                  "flex size-5 shrink-0 items-center justify-center rounded-full border-2",
+                                  selected
+                                    ? "border-primary bg-primary"
+                                    : "border-muted-foreground/40",
+                                )}
+                              >
+                                {selected && (
+                                  <span className="size-2 rounded-full bg-primary-foreground" />
+                                )}
+                              </span>
+                              <span className="min-w-0 flex-1 space-y-1">
+                                <span className="flex items-center justify-between gap-2">
+                                  <span className="font-mono text-xs font-bold">
+                                    {invoice.number}
+                                  </span>
+                                  <Badge variant={meta.badge}>{meta.label}</Badge>
+                                </span>
+                                <span className="flex items-center justify-between text-[11px] text-muted-foreground">
+                                  <span>
+                                    {formatDate(invoice.date)} · {invoice.line_count} أصناف
+                                  </span>
+                                  <span className="font-mono text-xs font-bold text-foreground">
+                                    {formatCurrency(invoice.total_amount)}
+                                  </span>
+                                </span>
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
                     <FormMessage className="text-[11px] font-bold" />
                   </FormItem>
                 )}
@@ -199,27 +284,54 @@ export function ClaimFormDrawer({
               />
 
               <div className="space-y-1.5">
-                <label className="text-[11px] font-bold text-primary">صورة (اختياري)</label>
+                <span className="text-[11px] font-bold text-primary">صورة (اختياري)</span>
                 {photoPreview ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={photoPreview}
-                    alt="معاينة الصورة"
-                    className="h-32 w-full rounded-xl object-cover"
-                  />
-                ) : (
-                  <label className="flex h-24 w-full cursor-pointer flex-col items-center justify-center gap-1.5 rounded-xl border border-dashed border-border text-muted-foreground">
-                    <IconRenderer name="image_outlined" className="size-6" />
-                    <span className="text-[11px]">إرفاق صورة</span>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      capture="environment"
-                      className="hidden"
-                      onChange={handlePhotoChange}
+                  <div className="relative">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={photoPreview}
+                      alt="معاينة الصورة"
+                      className="h-40 w-full rounded-xl object-cover"
                     />
-                  </label>
+                    <button
+                      type="button"
+                      onClick={() => setPickedPhoto(null)}
+                      aria-label="إزالة الصورة"
+                      className="absolute end-2 top-2 flex size-7 items-center justify-center rounded-full bg-black/60 text-white"
+                    >
+                      <IconRenderer name="close_outlined" className="size-4" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 gap-2">
+                    {PHOTO_SOURCES.map(({ source, label, icon }) => (
+                      <button
+                        key={source}
+                        type="button"
+                        onClick={() => handlePickPhoto(source)}
+                        className="flex h-20 flex-col items-center justify-center gap-1.5 rounded-xl border border-dashed border-border text-muted-foreground transition-colors hover:border-primary/50"
+                      >
+                        <IconRenderer name={icon} className="size-6" />
+                        <span className="text-[11px]">{label}</span>
+                      </button>
+                    ))}
+                  </div>
                 )}
+                <input
+                  ref={cameraInputRef}
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  className="hidden"
+                  onChange={handleInputChange}
+                />
+                <input
+                  ref={galleryInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleInputChange}
+                />
               </div>
             </div>
 
