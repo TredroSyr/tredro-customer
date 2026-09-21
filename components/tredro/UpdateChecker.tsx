@@ -9,7 +9,8 @@ import { Drawer, DrawerClose, DrawerContent } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 
 const APP_PARAM = "customer";
-const APK_URL = "https://customer.tredro.online/download/tredro-customer.apk";
+const APK_URL =
+  "https://g7uxiqk5angfkrhm.public.blob.vercel-storage.com/tredro-customer.apk";
 
 // Compares two dot-separated version strings (e.g. "1.2.0" vs "1.10.0") part
 // by part as numbers instead of lexicographically, so "1.10.0" > "1.2.0".
