@@ -35,8 +35,8 @@ const TABS: Tab[] = [
   {
     to: "/invoices",
     label: "فواتيري",
-    filled: "card_filled",
-    outlined: "card_outlined",
+    filled: "money_filled",
+    outlined: "money_outlined",
   },
   // {
   //   to: "/account",
