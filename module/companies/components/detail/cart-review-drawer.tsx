@@ -22,8 +22,6 @@ import {
 import { useCreateOrderMutation } from "@/module/orders/hooks";
 import { Company } from "../../types";
 
-const SNAP_POINTS = [0.45, 0.94];
-
 export function CartReviewDrawer({
   company,
   open,
@@ -123,12 +121,7 @@ export function CartReviewDrawer({
           onOpenChange(next);
           if (!next) setExpanded(false);
         }}
-        showSwipeHandle
-        snapPoints={SNAP_POINTS}
-        defaultSnapPoint={SNAP_POINTS[0]}
-        onSnapPointChange={(snapPoint) =>
-          setExpanded(snapPoint === SNAP_POINTS[1])
-        }
+        onSnapPointChange={(snapPoint) => setExpanded(snapPoint === 1)}
       >
         <DrawerContent>
           <DrawerHeader>
@@ -148,13 +141,6 @@ export function CartReviewDrawer({
                 {formatCurrency(String(total), company.currency)}
               </span>
             </div>
-
-            {!expanded && (
-              <p className="animate-in fade-in-0 flex items-center justify-center gap-1.5 py-1 text-[11px] text-muted-foreground duration-300">
-                <IconRenderer name="arrow_up_outlined" className="size-3" />
-                اسحب لأعلى لعرض تفاصيل الطلب
-              </p>
-            )}
 
             {expanded && (
               <div className="animate-in fade-in-0 slide-in-from-bottom-2 space-y-4 duration-300">

@@ -19,8 +19,6 @@ export interface LocationPickerDialogProps {
   onConfirm: (lat: number, lng: number) => void;
 }
 
-const SNAP_POINTS = [0.6, 0.95];
-
 /** Lets the user pick a point on an embedded map and hands it back via onConfirm, without mutating anything itself. */
 export function LocationPickerDialog({
   open,
@@ -36,13 +34,7 @@ export function LocationPickerDialog({
   }, [open, initialPoint]);
 
   return (
-    <Drawer
-      open={open}
-      onOpenChange={onOpenChange}
-      showSwipeHandle
-      snapPoints={SNAP_POINTS}
-      defaultSnapPoint={SNAP_POINTS[1]}
-    >
+    <Drawer open={open} onOpenChange={onOpenChange}>
       <DrawerContent>
         <DrawerHeader>
           <DrawerTitle>حدد موقعك على الخريطة</DrawerTitle>
